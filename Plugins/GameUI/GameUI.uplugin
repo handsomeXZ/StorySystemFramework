@@ -1,0 +1,79 @@
+{
+	"FileVersion": 3,
+	"EngineVersion": "5.1.1",
+	"WhitelistPlatforms": "Win64",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/1fa479f8fbbd43ddafdbb4fdb316aef7",
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "GameUI",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "JTJ",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "GameUI",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "ModularGameplayActors",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "DecryptionFeatures",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "CommonStoryRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "CommonStoryEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "GlobalStoryTimeLine",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "EmotionFeature",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "CommonUI",
+			"Enabled": true
+		},
+		{
+			"Name": "GameFeatures",
+			"Enabled": true
+		},
+		{
+			"Name": "ModularGameplay",
+			"Enabled": true
+		},
+		{
+			"Name": "ControlFlows",
+			"Enabled": true
+		},
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		},
+	]
+}
