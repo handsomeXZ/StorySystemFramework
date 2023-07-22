@@ -15,7 +15,7 @@ class UPrimaryGameLayout;
 struct FSceneViewProjectionData;
 
 UCLASS(config=Engine, transient)
-class GAMEUI_API UCommonLocalPlayer : public ULocalPlayer
+class COMMONGAME_API UCommonLocalPlayer : public ULocalPlayer
 {
 	GENERATED_BODY()
 

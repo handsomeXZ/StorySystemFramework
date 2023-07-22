@@ -3,6 +3,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameUIPolicy.h"
 #include "CommonLocalPlayer.h"
+#include "CommonUIExtensions.h"
 #include "NativeGameplayTags.h"
 #include "UITag.h"
 #include "Input\CommonUIInputTypes.h"

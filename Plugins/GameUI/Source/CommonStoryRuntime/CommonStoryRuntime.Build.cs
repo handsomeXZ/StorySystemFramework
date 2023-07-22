@@ -34,9 +34,9 @@ public class CommonStoryRuntime : ModuleRules
                 "GameFeatures",
                 "ModularGameplay",
                 "ModularGameplayActors",
-				"GameUI",
 				"EnhancedInput",
 				"DeveloperSettings",
+				"CommonGame",
 			}
 			);
 			

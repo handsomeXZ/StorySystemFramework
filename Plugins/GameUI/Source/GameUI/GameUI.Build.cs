@@ -34,7 +34,10 @@ public class GameUI : ModuleRules
 				"GameFeatures",
 				"ModularGameplay",
 				"ControlFlows",
-				"ModularGameplayActors"
+				"ModularGameplayActors",
+				"EnhancedInput",
+				"CommonStoryRuntime",
+				"CommonGame",
 			}
 			);
 			
@@ -47,7 +50,7 @@ public class GameUI : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
-				"EnhancedInput",
+				
 			}
 			);
 		

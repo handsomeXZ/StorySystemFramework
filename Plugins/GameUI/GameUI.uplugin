@@ -52,6 +52,11 @@
 			"Name": "EmotionFeature",
 			"Type": "Runtime",
 			"LoadingPhase": "PreLoadingScreen"
+		},
+		{
+			"Name": "CommonGame",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
 		}
 	],
 	"Plugins": [

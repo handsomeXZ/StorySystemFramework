@@ -10,7 +10,7 @@
 class APawn;
 
 UCLASS(config=Game)
-class GAMEUI_API ACommonPlayerController : public APlayerController
+class COMMONGAME_API ACommonPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 

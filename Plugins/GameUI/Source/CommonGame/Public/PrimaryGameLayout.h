@@ -27,7 +27,7 @@ enum class EAsyncWidgetLayerState : uint8
  * of the UI for a single player.  Each player in a split-screen game will receive their own primary game layout.
  */
 UCLASS(Abstract, meta = (DisableNativeTick))
-class GAMEUI_API UPrimaryGameLayout : public UCommonUserWidget
+class COMMONGAME_API UPrimaryGameLayout : public UCommonUserWidget
 {
 	GENERATED_BODY()
 

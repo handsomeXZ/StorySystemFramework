@@ -19,7 +19,7 @@ class UCommonLocalPlayer;
  * subsystem in your own game.
  */
 UCLASS(Abstract, config = Game)
-class GAMEUI_API UGameUIManagerSubsystem : public UGameInstanceSubsystem
+class COMMONGAME_API UGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 	

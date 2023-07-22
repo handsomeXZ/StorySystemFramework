@@ -16,7 +16,7 @@ class ULocalPlayer;
  * Some extensions to CommonUI
  */
 UCLASS()
-class GAMEUI_API UCommonUIExtensions : public UBlueprintFunctionLibrary
+class COMMONGAME_API UCommonUIExtensions : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
