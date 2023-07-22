@@ -18,7 +18,9 @@ public:
 	virtual void AllocateDefaultPins() override;
 	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
 	virtual FText GetTooltipText() const override;
+	virtual void PostPasteNode() override;
 	virtual void DestroyNode() override;
+	virtual void PinConnectionListChanged(UEdGraphPin* Pin) override;
 	//virtual TArray<UEdGraph*> GetSubGraphs() const override { return TArray<UEdGraph*>({ BoundGraph }); }
 	//~ End UEdGraphNode Interface
 

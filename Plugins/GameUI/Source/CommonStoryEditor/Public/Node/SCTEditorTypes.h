@@ -9,34 +9,7 @@ const int32 NodeDistance = 60;
 
 namespace SCTClassUtils
 {
-	FString ClassToString(UClass* InClass)
-	{
-		FString ShortName = InClass ? InClass->GetMetaData(TEXT("DisplayName")) : FString();
-		if (!ShortName.IsEmpty())
-		{
-			return ShortName;
-		}
-
-		if (InClass)
-		{
-			FString ClassDesc = InClass->GetName();
-
-			if (InClass->HasAnyClassFlags(CLASS_CompiledFromBlueprint))
-			{
-				return ClassDesc.LeftChop(2);
-			}
-
-			const int32 ShortNameIdx = ClassDesc.Find(TEXT("_"), ESearchCase::CaseSensitive);
-			if (ShortNameIdx != INDEX_NONE)
-			{
-				ClassDesc.MidInline(ShortNameIdx + 1, MAX_int32, false);
-			}
-
-			return ClassDesc;
-		}
-
-		return TEXT("Selector");
-	}
+	FString ClassToString(UClass* InClass);
 }
 
 UCLASS()

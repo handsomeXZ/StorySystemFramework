@@ -82,14 +82,22 @@ public:
 
 	void CreateNewDialogueTree();
 	void CreateNewTransitionAction() const;
-	bool CanCreateNewDialogueTree() const;
-	bool CanCreateNewTransitionAction() const;
-	bool IsNewTransitionActionButtonVisible() const;
+	void CreateNewCommonAction() const;
+	void CreateNewSelectorAction() const;
+	bool CanCreateNewDialogueTree() const			{ return true; }
+	bool CanCreateNewTransitionAction() const		{ return true; }
+	bool CanCreateNewCommonAction() const			{ return true; }
+	bool CanCreateNewSelectorAction() const			{ return true; }
+	bool IsNewTransitionActionButtonVisible() const	{ return true; }
+	bool IsNewCommonActionButtonVisible() const		{ return true; }
+	bool IsNewSelectorActionButtonVisible() const	{ return true; }
 	TSharedRef<SWidget> HandleCreateNewTransitionActionMenu() const;
 
 	bool CanAccessSCTMode() const;
 	bool CanAccessSDTMode() const;
 
+	UObject* GetCurrentEditObject() const;
+	TSharedPtr<class IDetailsView> GetCurrentDetailsView() const;
 protected:
 	/** Called when "Save" is clicked for this asset */
 	virtual void SaveAsset_Execute() override;

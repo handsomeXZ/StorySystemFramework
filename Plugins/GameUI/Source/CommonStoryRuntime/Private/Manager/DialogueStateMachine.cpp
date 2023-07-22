@@ -1,5 +1,8 @@
 #include "Manager/DialogueStateMachine.h"
 
+#include "CommonGame/DialogueAction_RuleAction.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 UDialogueStateBase* FDialogueStateFactory::CreateState(UObject* Outer, EDialogueStateName StateName)
 {
@@ -385,10 +388,7 @@ void UDialogueState_WaitingOptionsDialogue::Execute(FDialogueTaskContext& Contex
 {
 	bIsActive = false;
 
-	if (!Context.SelectOptionDelegate.IsBound())
-	{
-		Context.SelectOptionDelegate.BindUObject(this, &ThisClass::ActiveThisState);
-	}
+	Context.SelectOptionDelegate.BindUObject(this, &ThisClass::ActiveThisState);
 }
 
 void UDialogueState_WaitingOptionsDialogue::ActiveThisState(FIndexHandle OptionID)
@@ -401,6 +401,7 @@ bool UDialogueState_WaitingOptionsDialogue::CanTransition(FDialogueTaskContext& 
 {
 	if (bIsActive)
 	{
+		Context.SelectOptionDelegate.Unbind();
 		Context.PlayerOnDiscardDelegate.Execute();
 
 		Context.CurrentIndexHandle = SelectedOptionID;

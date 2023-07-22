@@ -37,6 +37,22 @@ FString USCTGraphNode_Transition::GetNodeName() const
 	return TEXT("(null)");
 }
 
+void USCTGraphNode_Transition::PostPasteNode()
+{
+	Super::PostPasteNode();
+
+	// We don't want to paste nodes in that aren't fully linked (transition nodes have fixed pins as they
+	// really describe the connection between two other nodes). If we find one missing link, get rid of the node.
+	for (UEdGraphPin* Pin : Pins)
+	{
+		if (Pin->LinkedTo.Num() == 0)
+		{
+			DestroyNode();
+			break;
+		}
+	}
+}
+
 void USCTGraphNode_Transition::DestroyNode()
 {
 	//UEdGraph* GraphToRemove = BoundGraph;
@@ -44,14 +60,24 @@ void USCTGraphNode_Transition::DestroyNode()
 	//BoundGraph = NULL;
 	Super::DestroyNode();
 
-	/*if (GraphToRemove)
-	{
-		UBlueprint* Blueprint = FBlueprintEditorUtils::FindBlueprintForNodeChecked(this);
-		FBlueprintEditorUtils::RemoveGraph(Blueprint, GraphToRemove, EGraphRemoveFlags::Recompile);
-	}*/
 }
 
+void USCTGraphNode_Transition::PinConnectionListChanged(UEdGraphPin* Pin)
+{
+	if (Pin->LinkedTo.Num() == 0)
+	{
+		// Commit suicide; transitions must always have an input and output connection
+		Modify();
 
+		// Our parent graph will have our graph in SubGraphs so needs to be modified to record that.
+		if (UEdGraph* ParentGraph = GetGraph())
+		{
+			ParentGraph->Modify();
+		}
+
+		DestroyNode();
+	}
+}
 
 UEdGraphPin* USCTGraphNode_Transition::GetInputPin() const
 {

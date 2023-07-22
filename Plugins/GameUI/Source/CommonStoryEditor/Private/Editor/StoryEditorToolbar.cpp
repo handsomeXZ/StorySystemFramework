@@ -80,6 +80,16 @@ void FStoryEditorToolbar::AddStoryChapterTreeToolbar(TSharedPtr<FExtender> Exten
 	StoryEditorPtr->AddToolbarExtender(ToolbarExtender);
 }
 
+void FStoryEditorToolbar::AddStoryDialogueTreeToolbar(TSharedPtr<FExtender> Extender)
+{
+	check(StoryEditor.IsValid());
+	TSharedPtr<FStoryChapterTreeEditor> StoryEditorPtr = StoryEditor.Pin();
+
+	TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
+	ToolbarExtender->AddToolBarExtension("Asset", EExtensionHook::After, StoryEditorPtr->GetToolkitCommands(), FToolBarExtensionDelegate::CreateSP(this, &FStoryEditorToolbar::FillStoryDialogueTreeToolbar));
+	StoryEditorPtr->AddToolbarExtender(ToolbarExtender);
+}
+
 void FStoryEditorToolbar::FillModesToolbar(FToolBarBuilder& ToolbarBuilder)
 {
 	check(StoryEditor.IsValid());
@@ -90,14 +100,14 @@ void FStoryEditorToolbar::FillModesToolbar(FToolBarBuilder& ToolbarBuilder)
 
 	// Left side padding
 	StoryEditorPtr->AddToolbarWidget(SNew(SSpacer).Size(FVector2D(4.0f, 1.0f)));
-
+	
 	StoryEditorPtr->AddToolbarWidget(
 		SNew(SModeWidget, FStoryChapterTreeEditor::GetLocalizedMode( FStoryChapterTreeEditor::StoryChapterTreeMode), FStoryChapterTreeEditor::StoryChapterTreeMode)
 		.OnGetActiveMode(GetActiveMode)
 		.OnSetActiveMode(SetActiveMode)
 		.CanBeSelected(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CanAccessSCTMode)
 		.ToolTipText(LOCTEXT("StoryChapterTreeModeButtonTooltip", "Switch to Story Chapter Tree Mode"))
-		.IconImage(FAppStyle::GetBrush("BTEditor.SwitchToStoryChapterTreeMode"))
+		.IconImage(FAppStyle::GetBrush("BTEditor.SwitchToBehaviorTreeMode"))
 	);
 
 	StoryEditorPtr->AddToolbarWidget(SNew(SSpacer).Size(FVector2D(10.0f, 1.0f)));
@@ -108,7 +118,7 @@ void FStoryEditorToolbar::FillModesToolbar(FToolBarBuilder& ToolbarBuilder)
 		.OnSetActiveMode(SetActiveMode)
 		.CanBeSelected(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CanAccessSDTMode)
 		.ToolTipText(LOCTEXT("StoryDialogueTreeModeButtonTooltip", "Switch to Story Dialogue Tree Mode"))
-		.IconImage(FAppStyle::GetBrush("BTEditor.SwitchToStoryDialogueTreeMode"))
+		.IconImage(FAppStyle::GetBrush("BTEditor.SwitchToBehaviorTreeMode"))
 	);
 		
 	// Right side padding
@@ -123,7 +133,8 @@ void FStoryEditorToolbar::FillStoryChapterTreeToolbar(FToolBarBuilder& ToolbarBu
 	{
 		ToolbarBuilder.BeginSection("Dialogue");
 		{
-			ToolbarBuilder.AddToolBarButton(FStoryEditorCommonCommands::Get().NewDialogueTree);
+			ToolbarBuilder.AddToolBarButton(FStoryEditorCommonCommands::Get().NewDialogueTree, NAME_None, TAttribute<FText>(), TAttribute<FText>(),
+				TAttribute<FSlateIcon>(FSlateIcon(FAppStyle::Get().GetStyleSetName(), "BTEditor.SwitchToBehaviorTreeMode")), FName(TEXT("NewDialogueTree")));
 		}
 		ToolbarBuilder.EndSection();
 
@@ -158,6 +169,53 @@ void FStoryEditorToolbar::FillStoryChapterTreeToolbar(FToolBarBuilder& ToolbarBu
 			//	NewTransitionActionTooltip,
 			//	NewTransitionActionIcon
 			//);
+		}
+		ToolbarBuilder.EndSection();
+	}
+}
+
+void FStoryEditorToolbar::FillStoryDialogueTreeToolbar(FToolBarBuilder& ToolbarBuilder)
+{
+	check(StoryEditor.IsValid());
+	TSharedPtr<FStoryChapterTreeEditor> StoryEditorPtr = StoryEditor.Pin();
+	if (StoryEditorPtr->GetCurrentMode() == FStoryChapterTreeEditor::StoryDialogueTreeMode)
+	{
+
+		ToolbarBuilder.BeginSection("TransitionAction");
+		{
+			const FText NewCommonActionLabel = LOCTEXT("NewAction_Label", "New Common Action");
+			const FText NewCommonActionTooltip = LOCTEXT("NewAction_ToolTip", "Create a new Common Action Blueprint from a base class");
+			const FSlateIcon NewCommonActionIcon = FSlateIcon(FAppStyle::GetAppStyleSetName(), "BTEditor.Graph.NewTask");
+
+			ToolbarBuilder.AddToolBarButton(
+				FUIAction(
+					FExecuteAction::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CreateNewCommonAction),
+					FCanExecuteAction::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CanCreateNewCommonAction),
+					FIsActionChecked(),
+					FIsActionButtonVisible::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::IsNewCommonActionButtonVisible)
+				),
+				NAME_None,
+				NewCommonActionLabel,
+				NewCommonActionTooltip,
+				NewCommonActionIcon
+			);
+
+			const FText NewSelectorActionLabel = LOCTEXT("NewAction_Label", "New Selector Action");
+			const FText NewSelectorActionTooltip = LOCTEXT("NewAction_ToolTip", "Create a new Selector Action Blueprint from a base class");
+			const FSlateIcon NewSelectorActionIcon = FSlateIcon(FAppStyle::GetAppStyleSetName(), "BTEditor.Graph.NewTask");
+
+			ToolbarBuilder.AddToolBarButton(
+				FUIAction(
+					FExecuteAction::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CreateNewSelectorAction),
+					FCanExecuteAction::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::CanCreateNewSelectorAction),
+					FIsActionChecked(),
+					FIsActionButtonVisible::CreateSP(StoryEditorPtr.Get(), &FStoryChapterTreeEditor::IsNewSelectorActionButtonVisible)
+				),
+				NAME_None,
+				NewSelectorActionLabel,
+				NewSelectorActionTooltip,
+				NewSelectorActionIcon
+			);
 		}
 		ToolbarBuilder.EndSection();
 	}

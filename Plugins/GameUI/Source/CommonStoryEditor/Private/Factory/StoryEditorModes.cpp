@@ -126,6 +126,7 @@ FSDTEditorApplicationMode::FSDTEditorApplicationMode(TSharedPtr<class FStoryChap
 		);
 
 	InStoryChapterTreeEditor->GetToolbarBuilder()->AddModesToolbar(ToolbarExtender);
+	InStoryChapterTreeEditor->GetToolbarBuilder()->AddStoryDialogueTreeToolbar(ToolbarExtender);
 }
 
 void FSDTEditorApplicationMode::RegisterTabFactories(TSharedPtr<FTabManager> InTabManager)

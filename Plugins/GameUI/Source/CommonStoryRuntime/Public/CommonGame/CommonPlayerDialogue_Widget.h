@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CommonGame/TYLActivatableWidget.h"
+#include "CommonActivatableWidget.h"
 #include "CommonDialogue_Interface.h"
 #include "CommonPlayerDialogue_Widget.generated.h"
 
 struct FStoryDialogueContext;
 
 UCLASS(Abstract, Blueprintable)
-class COMMONSTORYRUNTIME_API UCommonPlayerDialogue_Widget : public UTYLActivatableWidget, public ICommonDialogue_Interface
+class COMMONSTORYRUNTIME_API UCommonPlayerDialogue_Widget : public UCommonActivatableWidget, public ICommonDialogue_Interface
 {
 	GENERATED_BODY()
 public:

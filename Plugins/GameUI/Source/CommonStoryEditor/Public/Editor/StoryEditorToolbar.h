@@ -16,10 +16,11 @@ public:
 
 	void AddModesToolbar(TSharedPtr<FExtender> Extender);
 	void AddStoryChapterTreeToolbar(TSharedPtr<FExtender> Extender);
-
+	void AddStoryDialogueTreeToolbar(TSharedPtr<FExtender> Extender);
 private:
 	void FillModesToolbar(FToolBarBuilder& ToolbarBuilder);
 	void FillStoryChapterTreeToolbar(FToolBarBuilder& ToolbarBuilder);
+	void FillStoryDialogueTreeToolbar(FToolBarBuilder& ToolbarBuilder);
 
 protected:
 	/** Pointer back to the blueprint editor tool that owns us */

@@ -3,7 +3,6 @@
 
 #include "CoreMinimal.h"
 #include "Node/SDTGraphNode.h"
-
 #include "SDTGraphNode_DSelector.generated.h"
 
 class UObject;

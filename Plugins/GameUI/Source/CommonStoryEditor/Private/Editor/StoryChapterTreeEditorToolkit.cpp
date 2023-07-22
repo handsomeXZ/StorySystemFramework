@@ -6,6 +6,7 @@
 #include "Graph/SDTGraph.h"
 #include "StoryChapterEdGraphSchema.h"
 #include "StoryDialogueEdGraphSchema.h"
+#include "CommonStoryEditor.h"
 #include "Node/SCTGraphNode.h"
 #include "Node/SCTGraphNode_Chapter.h"
 #include "Node/SCTGraphNode_Transition.h"
@@ -376,18 +377,13 @@ void FStoryChapterTreeEditor::CreateNewDialogueTree()
 	}
 }
 
-bool FStoryChapterTreeEditor::CanCreateNewDialogueTree() const
-{
-	return true;
-}
-
 void FStoryChapterTreeEditor::HandleNewNodeClassPicked(UClass* InClass) const
 {
-	if (StoryChapterTree != nullptr && InClass != nullptr && StoryChapterTree->GetOutermost())
+	if (GetCurrentEditObject() != nullptr && InClass != nullptr && GetCurrentEditObject()->GetOutermost())
 	{
 		const FString ClassName = FBlueprintEditorUtils::GetClassNameWithoutSuffix(InClass);
 
-		FString PathName = StoryChapterTree->GetOutermost()->GetPathName();
+		FString PathName = GetCurrentEditObject()->GetOutermost()->GetPathName();
 		PathName = FPaths::GetPath(PathName);
 
 		// Now that we've generated some reasonable default locations/names for the package, allow the user to have the final say
@@ -434,14 +430,14 @@ void FStoryChapterTreeEditor::CreateNewTransitionAction() const
 	HandleNewNodeClassPicked(UTransitionAction::StaticClass());
 }
 
-bool FStoryChapterTreeEditor::CanCreateNewTransitionAction() const
+void FStoryChapterTreeEditor::CreateNewCommonAction() const
 {
-	return true;
+	HandleNewNodeClassPicked(USDTDCommonAction::StaticClass());
 }
 
-bool FStoryChapterTreeEditor::IsNewTransitionActionButtonVisible() const
+void FStoryChapterTreeEditor::CreateNewSelectorAction() const
 {
-	return true;
+	HandleNewNodeClassPicked(USDTDSelectorAction::StaticClass());
 }
 
 TSharedRef<SWidget> FStoryChapterTreeEditor::HandleCreateNewTransitionActionMenu() const
@@ -460,32 +456,13 @@ void FStoryChapterTreeEditor::OnSelectedNodesChanged(const TSet<class UObject*>&
 	TArray<UObject*> Selection = StoryChapterTreeEditorUtils::GetSelectionForPropertyEditor(NewSelection);
 	if (Selection.Num() == 1)
 	{
-		if (GetCurrentMode() == StoryChapterTreeMode && SCTDetailsView.IsValid())
-		{
-			SCTDetailsView->SetObjects(Selection);
-			return;
-		}
-		else if (GetCurrentMode() == StoryDialogueTreeMode && SDTDetailsView.IsValid())
-		{
-			SDTDetailsView->SetObjects(Selection);
-			return;
-		}
+		GetCurrentDetailsView()->SetObjects(Selection);
 	}
-	else if (Selection.Num() == 0)
+	else
 	{
-		if (GetCurrentMode() == StoryChapterTreeMode && SCTDetailsView.IsValid())
-		{
-			SCTDetailsView->SetObject(StoryChapterTree);
-			return;
-		}
-		else if (GetCurrentMode() == StoryDialogueTreeMode && SDTDetailsView.IsValid())
-		{
-			SDTDetailsView->SetObject(StoryDialogueTree);
-			return;
-		}
+		GetCurrentDetailsView()->SetObject(GetCurrentEditObject());
 	}
 
-	SCTDetailsView->SetObject(nullptr);
 }
 
 FGraphPanelSelectionSet FStoryChapterTreeEditor::GetSelectedNodes() const
@@ -946,5 +923,32 @@ void FStoryChapterTreeEditor::SaveAsset_Execute()
 	FAssetEditorToolkit::SaveAsset_Execute();
 }
 
+UObject* FStoryChapterTreeEditor::GetCurrentEditObject() const
+{
+	if (GetCurrentMode() == StoryChapterTreeMode)
+	{
+		return StoryChapterTree;
+	}
+	else if (GetCurrentMode() == StoryDialogueTreeMode)
+	{
+		return StoryDialogueTree;
+	}
+
+	return nullptr;
+}
+
+TSharedPtr<class IDetailsView> FStoryChapterTreeEditor::GetCurrentDetailsView() const
+{
+	if (GetCurrentMode() == StoryChapterTreeMode)
+	{
+		return SCTDetailsView;
+	}
+	else if (GetCurrentMode() == StoryDialogueTreeMode)
+	{
+		return SDTDetailsView;
+	}
+
+	return nullptr;
+}
 
 #undef LOCTEXT_NAMESPACE
