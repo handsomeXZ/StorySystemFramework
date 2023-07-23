@@ -1,6 +1,8 @@
 #include "Node/SDTGraphNode_DAction.h"
 
 #include "Node/SCTEditorTypes.h"
+#include "Node/SDTNode_DAction_Instance.h"
+#include "Node/SDTNode_DAction_UnInstance.h"
 
 #include "Kismet2/BlueprintEditorUtils.h"
 
@@ -16,7 +18,24 @@ void USDTGraphNode_DAction::AllocateDefaultPins()
 
 FText USDTGraphNode_DAction::GetNodeTitle(ENodeTitleType::Type TitleType) const
 {
-	return FText::FromString(FName::NameToDisplayString(SCTClassUtils::ClassToString(ActionClass), false));
+	if (bInstancedAction)
+	{
+		USDTNode_DAction_Instance* MyNode = Cast<USDTNode_DAction_Instance>(NodeInstance);
+		if (MyNode->NodeName.Len() > 0)
+		{
+			return FText::FromString(MyNode->NodeName);
+		}
+	}
+	else
+	{
+		USDTNode_DAction_UnInstance* MyNode = Cast<USDTNode_DAction_UnInstance>(NodeInstance);
+		if (MyNode->NodeName.Len() > 0)
+		{
+			return FText::FromString(MyNode->NodeName);
+		}
+	}
+
+	return FText::FromString(FName::NameToDisplayString(SCTClassUtils::ClassToString(GetActionDataClass()), false));
 }
 
 FText USDTGraphNode_DAction::GetTooltipText() const
@@ -40,6 +59,40 @@ UEdGraphPin* USDTGraphNode_DAction::GetOutputPin() const
 	return Pins[1];
 }
 
+UClass* USDTGraphNode_DAction::GetActionDataClass() const
+{
+	if (bInstancedAction)
+	{
+		USDTNode_DAction_Instance* Action = Cast<USDTNode_DAction_Instance>(NodeInstance);
+		if (Action->ActionInstance)
+		{
+			return Action->ActionInstance->GetClass();
+		}
+	}
+	else
+	{
+		USDTNode_DAction_UnInstance* Action = Cast<USDTNode_DAction_UnInstance>(NodeInstance);
+		if (Action->ActionClass)
+		{
+			return Action->ActionClass;
+		}
+	}
+	return ActionClass;
+}
+
+void USDTGraphNode_DAction::InitializeNodeInstance()
+{
+	if (bInstancedAction)
+	{
+		USDTNode_DAction_Instance* Action = Cast<USDTNode_DAction_Instance>(NodeInstance);
+		Action->ActionInstance = NewObject<USDTDCommonAction>(NodeInstance, ActionClass);
+	}
+	else
+	{
+		USDTNode_DAction_UnInstance* Action = Cast<USDTNode_DAction_UnInstance>(NodeInstance);
+		Action->ActionClass = ActionClass;
+	}
+}
 
 
 #undef LOCTEXT_NAMESPACE

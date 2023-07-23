@@ -76,11 +76,12 @@ void USCTGraphNode::JumpToDefinition() const
 
 void USCTGraphNode::PrepareForCopying()
 {
-	//if (NodeInstance)
-	//{
-	//	// Temporarily take ownership of the node instance, so that it is not deleted when cutting
-	//	NodeInstance->Rename(nullptr, this, REN_DontCreateRedirectors | REN_DoNotDirty);
-	//}
+	if (NodeInstance)
+	{
+		// Temporarily take ownership of the node instance, so that it is not deleted when cutting
+		// Because until now, node has always been owned by GraphOwner (Asset)
+		NodeInstance->Rename(nullptr, this, REN_DontCreateRedirectors | REN_DoNotDirty);
+	}
 }
 
 bool USCTGraphNode::CanDuplicateNode() const

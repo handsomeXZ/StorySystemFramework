@@ -173,6 +173,7 @@ TSharedRef<SWidget> FStoryChapterTreeEditor::SpawnSCTGraphEdTab()
 {
 	SGraphEditor::FGraphEditorEvents InEvents;
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FStoryChapterTreeEditor::OnSelectedNodesChanged);
+	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FStoryChapterTreeEditor::OnNodeTitleCommitted);
 
 	USCTGraph* EdGraph = Cast<USCTGraph>(StoryChapterTree->EdGraph);
 	if (!EdGraph)
@@ -199,6 +200,7 @@ TSharedRef<SWidget> FStoryChapterTreeEditor::SpawnSDTGraphEdTab()
 {
 	SGraphEditor::FGraphEditorEvents InEvents;
 	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FStoryChapterTreeEditor::OnSelectedNodesChanged);
+	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FStoryChapterTreeEditor::OnNodeTitleCommitted);
 
 	USDTGraph* EdGraph = Cast<USDTGraph>(StoryDialogueTree->EdGraph);
 	if (!EdGraph)
@@ -315,17 +317,15 @@ void FStoryChapterTreeEditor::BindCommonCommands()
 		FCanExecuteAction::CreateRaw(this, &FStoryChapterTreeEditor::CanDuplicateNodes)
 	);
 
-	//ToolkitCommands->MapAction(
-	//	FGraphEditorCommands::Get().CreateComment,
-	//	FExecuteAction::CreateRaw(this, &FStoryChapterTreeEditor::OnCreateComment),
-	//	FCanExecuteAction::CreateRaw(this, &FStoryChapterTreeEditor::CanCreateComment)
-	//);
+	ToolkitCommands->MapAction(FStoryEditorCommonCommands::Get().CreateComment,
+		FExecuteAction::CreateRaw(this, &FStoryChapterTreeEditor::OnCreateComment),
+		FCanExecuteAction::CreateRaw(this, &FStoryChapterTreeEditor::CanCreateComment)
+	);
 
 	ToolkitCommands->MapAction(FStoryEditorCommonCommands::Get().NewDialogueTree,
 		FExecuteAction::CreateSP(this, &FStoryChapterTreeEditor::CreateNewDialogueTree),
 		FCanExecuteAction::CreateSP(this, &FStoryChapterTreeEditor::CanCreateNewDialogueTree)
 	);
-
 
 }
 
@@ -509,10 +509,18 @@ void FStoryChapterTreeEditor::DeleteSelectedNodes()
 			if (Node->CanUserDeleteNode())
 			{
 				Node->Modify();
+
+				if (const UEdGraphSchema* Schema = CurrentGraphEditor->GetCurrentGraph()->GetSchema())
+				{
+					Schema->BreakNodeLinks(*Node);
+				}
+
 				Node->DestroyNode();
 			}
 		}
 	}
+
+
 }
 
 bool FStoryChapterTreeEditor::CanDeleteNodes() const
@@ -822,6 +830,33 @@ bool FStoryChapterTreeEditor::CanDuplicateNodes() const
 	return CanCopyNodes();
 }
 
+bool FStoryChapterTreeEditor::CanCreateComment() const
+{
+	return CurrentGraphEditor.IsValid() ? /*(CurrentGraphEditor->GetNumberOfSelectedNodes() != 0)*/true : false;
+}
+
+void FStoryChapterTreeEditor::OnCreateComment()
+{
+	if (UEdGraph* EdGraph = CurrentGraphEditor.IsValid() ? CurrentGraphEditor->GetCurrentGraph() : nullptr)
+	{
+		TSharedPtr<FEdGraphSchemaAction> Action = EdGraph->GetSchema()->GetCreateCommentAction();
+		if (Action.IsValid())
+		{
+			Action->PerformAction(EdGraph, nullptr, FVector2D());
+		}
+	}
+}
+
+void FStoryChapterTreeEditor::OnNodeTitleCommitted(const FText& NewText, ETextCommit::Type CommitInfo, UEdGraphNode* NodeBeingChanged)
+{
+	if (NodeBeingChanged)
+	{
+		static const FText TranscationTitle = FText::FromString(FString(TEXT("Rename Node")));
+		const FScopedTransaction Transaction(TranscationTitle);
+		NodeBeingChanged->Modify();
+		NodeBeingChanged->OnRenameNode(NewText.ToString());
+	}
+}
 
 FName FStoryChapterTreeEditor::GetToolkitFName() const
 {

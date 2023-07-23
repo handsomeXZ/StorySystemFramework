@@ -32,4 +32,6 @@ public:
 	UEdGraphPin* GetTrueOutputPin() const;
 	UEdGraphPin* GetFalseOutputPin() const;
 
+	UClass* GetActionDataClass() const;
+
 };

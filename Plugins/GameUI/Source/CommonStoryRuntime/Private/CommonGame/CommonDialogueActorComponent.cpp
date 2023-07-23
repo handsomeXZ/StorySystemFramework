@@ -60,12 +60,14 @@ void UCommonDialogueActorComponent::EndPlay(const EEndPlayReason::Type EndPlayRe
 }
 
 
-void UCommonDialogueActorComponent::ActivateDialogueInteractive()
+bool UCommonDialogueActorComponent::ActivateDialogueInteractive()
 {
 	if (UDialogueManager* DM = UGameInstance::GetSubsystem<UDialogueManager>(GetWorld()->GetGameInstance()))
 	{
-		DM->ActivateDialogueTask(IdentityTag);
+		return DM->ActivateDialogueTask(IdentityTag);
 	}
+
+	return false;
 }
 
 void UCommonDialogueActorComponent::Register()

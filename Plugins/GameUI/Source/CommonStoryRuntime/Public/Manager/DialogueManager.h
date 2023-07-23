@@ -46,7 +46,7 @@ public:
 	void UnRegisterPlayer();
 
 	UFUNCTION(BlueprintCallable)
-	void SelectDialogue(FIndexHandle OptionID);
+	void SelectDialogue(int32 OptionID);
 
 	void UnBindInput();
 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "GameFramework\Actor.h"
 #include "StoryDialogueTypes.generated.h"
 
 struct FStoryDialogueContext;
@@ -22,6 +24,13 @@ enum class ESDTNodeType : uint8
 	Return,
 	Continue,
 	Exit,
+};
+
+UENUM()
+enum class ESDTCommonActionType : uint8
+{
+	Generic,
+	Blocking,
 };
 
 USTRUCT(BlueprintType)
@@ -78,6 +87,7 @@ enum class EDialogueStateName : uint8
 	Execute,
 	WaitingSingleDialogue,
 	WaitingOptionsDialogue,
+	WaitingBlockingAction,
 	Exit,
 };
 
@@ -98,14 +108,21 @@ struct FDialogueItem
 	GENERATED_BODY()
 public:
 	FDialogueItem() {}
-	FDialogueItem(FIndexHandle IndexIn, FText& TextIn, bool bSelectedIn = false) : Index(IndexIn), Text(TextIn), bSelected(bSelectedIn) {}
+	FDialogueItem(int32 IndexIn, FText& TextIn, bool bSelectedIn = false) : Index(IndexIn), Text(TextIn), bSelected(bSelectedIn) {}
+	FDialogueItem(int32 IndexIn, FText& TextIn, TMap<FName, float> ExtraFloatIn, bool bSelectedIn = false) : Index(IndexIn), Text(TextIn), bSelected(bSelectedIn)
+	{
+		ExtraFloat.Empty();
+		ExtraFloat.Append(ExtraFloatIn);
+	}
 
 	UPROPERTY(BlueprintReadOnly)
-	FIndexHandle Index;
+	int32 Index;
 	UPROPERTY(BlueprintReadOnly)
 	FText Text;
 	UPROPERTY(BlueprintReadOnly)
 	bool bSelected;
+	UPROPERTY(BlueprintReadOnly)
+	TMap<FName, float> ExtraFloat;
 };
 
 USTRUCT(BlueprintType)
@@ -119,3 +136,29 @@ public:
 	TArray<FDialogueItem> Contents;
 };
 
+USTRUCT(BlueprintType)
+struct FDialogueGlobalContext
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FName, float> FloatData;
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FGameplayTag, TObjectPtr<AActor>> Targets;
+	UPROPERTY()
+	TObjectPtr<UActionToContinue> ActionToContinue;
+};
+
+UCLASS()
+class UActionToContinue : public UObject
+{
+	GENERATED_BODY()
+public:
+	UFUNCTION(BlueprintCallable)
+	void ContinueExc() { bContinue = true; }
+
+	bool CanContinue() { return bContinue; }
+
+private:
+	bool bContinue = false;
+};

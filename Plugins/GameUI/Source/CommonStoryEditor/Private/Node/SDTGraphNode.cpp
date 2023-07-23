@@ -30,11 +30,6 @@ void USDTGraphNode::PostPlacedNewNode()
 	}
 }
 
-void USDTGraphNode::PrepareForCopying()
-{
-	
-}
-
 bool USDTGraphNode::CanDuplicateNode() const
 {
 	return true;
@@ -53,6 +48,17 @@ void USDTGraphNode::DestroyNode()
 void USDTGraphNode::PostCopyNode()
 {
 	ResetNodeOwner();
+}
+
+
+void USDTGraphNode::PrepareForCopying()
+{
+	if (NodeInstance)
+	{
+		// Temporarily take ownership of the node instance, so that it is not deleted when cutting
+		// Because until now, node has always been owned by GraphOwner (Asset)
+		NodeInstance->Rename(nullptr, this, REN_DontCreateRedirectors | REN_DoNotDirty);
+	}
 }
 
 void USDTGraphNode::ResetNodeOwner()

@@ -64,7 +64,7 @@ void USCTGraphNode_Transition::DestroyNode()
 
 void USCTGraphNode_Transition::PinConnectionListChanged(UEdGraphPin* Pin)
 {
-	if (Pin->LinkedTo.Num() == 0)
+	if (Pin->LinkedTo.Num() < 2)
 	{
 		// Commit suicide; transitions must always have an input and output connection
 		Modify();

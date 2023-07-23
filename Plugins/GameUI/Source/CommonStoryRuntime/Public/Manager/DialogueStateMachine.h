@@ -6,7 +6,7 @@
 
 #include "DialogueStateMachine.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnSelectOptionHandler, FIndexHandle);
+DECLARE_DELEGATE_OneParam(FOnSelectOptionHandler, int32);
 
 USTRUCT(BlueprintType)
 struct FDialogueTaskContext
@@ -19,6 +19,7 @@ public:
 	bool bTimeWaitForSkip;
 	float TimeWaitForSkip;
 	//////////////////////////////////////////////////////////////////////////
+	FDialogueGlobalContext ActionContext;
 	TObjectPtr<UStoryDialogueTree> StoryDialogueTree;
 	FWorldContext WorldContext;
 	TMap<TObjectPtr<UInputAction>, FInputHandle> InputHandles;
@@ -56,7 +57,7 @@ public:
 
 	virtual void Update(FDialogueTaskContext& Context) {}
 
-	virtual void SwitchState(ESDTNodeType PrevNodeType, ESDTNodeType NextNodeType) {}
+	virtual void SwitchState(FDialogueTaskContext& Context, ESDTNodeType PrevNodeType, ESDTNodeType NextNodeType) {}
 
 	virtual EDialogueStateName GetState() { return EDialogueStateName::UnKnown; }
 };
@@ -82,7 +83,7 @@ public:
 
 	virtual void Update(FDialogueTaskContext& Context) override;
 
-	virtual void SwitchState(ESDTNodeType PrevNodeType, ESDTNodeType NextNodeType) override;
+	virtual void SwitchState(FDialogueTaskContext& Context, ESDTNodeType PrevNodeType, ESDTNodeType NextNodeType) override;
 
 	virtual EDialogueStateName GetState() override;
 
@@ -113,11 +114,7 @@ class UDialogueState_Active : public UDialogueStateBase
 public:
 	UDialogueState_Active() { StateID = EDialogueStateName::Active; }
 
-	virtual void Execute(FDialogueTaskContext& Context)
-	{
-		Context.CurrentIndexHandle = Context.StoryDialogueTree->RootIndex;
-		Context.bTimeWaitForSkip = false;
-	}
+	virtual void Execute(FDialogueTaskContext& Context);
 	virtual bool CanTransition(FDialogueTaskContext& Context)
 	{
 		Reset();
@@ -185,14 +182,27 @@ public:
 	virtual void Reset()
 	{
 		bIsActive = false;
-		SelectedOptionID = FIndexHandle();
+		SelectedOptionID = -1;
 	}
 
-	void ActiveThisState(FIndexHandle OptionID);
+	void ActiveThisState(int32 OptionID);
 
 private:
 	bool bIsActive;
-	FIndexHandle SelectedOptionID;
+	int32 SelectedOptionID;
+};
+
+UCLASS()
+class UDialogueState_WaitingBlockingAction : public UDialogueStateBase
+{
+	GENERATED_BODY()
+public:
+	UDialogueState_WaitingBlockingAction() { StateID = EDialogueStateName::WaitingBlockingAction; }
+
+	virtual void Execute(FDialogueTaskContext& Context);
+
+	virtual bool CanTransition(FDialogueTaskContext& Context);
+
 };
 
 UCLASS()

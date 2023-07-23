@@ -288,6 +288,10 @@ bool UStoryChapterEdGraphSchema::CreateAutomaticConversionNodeAndConnections(UEd
 	return false;
 }
 
+TSharedPtr<FEdGraphSchemaAction> UStoryChapterEdGraphSchema::GetCreateCommentAction() const
+{
+	return TSharedPtr<FEdGraphSchemaAction>(static_cast<FEdGraphSchemaAction*>(new FSCTSchemaAction_AddComment));
+}
 
 bool UStoryChapterEdGraphSchema::IsCacheVisualizationOutOfDate(int32 InVisualizationCacheID) const
 {

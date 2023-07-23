@@ -24,6 +24,9 @@ public:
 	virtual UEdGraphPin* GetInputPin() const override;
 	virtual UEdGraphPin* GetOutputPin() const override;
 	virtual FString GetNodeName() const override;
+	virtual void InitializeNodeInstance() override;
 	//~ End USCTGraphNode Interface
+
+	UClass* GetActionDataClass() const;
 
 };

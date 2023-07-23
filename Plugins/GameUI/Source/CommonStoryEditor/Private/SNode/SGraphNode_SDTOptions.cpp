@@ -284,7 +284,7 @@ void SGraphNode_SDTOptions::AddPin(const TSharedRef<SGraphPin>& PinToAdd)
 		TSharedPtr<SInlineEditableTextBlock> NodeText;
 
 		RightNodeBox->AddSlot()
-			.HAlign(HAlign_Center)
+			.HAlign(HAlign_Right)
 			.VAlign(VAlign_Center)
 			.FillHeight(1.0f)
 			.Padding(0, 2.0f)

@@ -2,7 +2,10 @@
 
 #include "Asset/StoryChapterTree.h"
 #include "Node/SCTNode_Chapter.h"
+#include "Setting\CommonStorySettings.h"
+
 #include "NativeGameplayTags.h"
+
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_GAMEPLAY_STORYCHAPTER_DEFAULT, "Gameplay.StoryChapter.Default");
 
@@ -35,7 +38,7 @@ void UStoryChapterManager::Update()
 	{
 		for (FSCTCompositeChild& child : CurrentChapter->Children)
 		{
-			if (child.ChildTransition->bAutomaticTransition || child.ChildTransition->Action->Execute())
+			if (child.ChildTransition->bAutomaticTransition || (child.ChildTransition->Action && child.ChildTransition->Action->Execute()))
 			{
 				CurrentChapter = child.ChildChapter;
 

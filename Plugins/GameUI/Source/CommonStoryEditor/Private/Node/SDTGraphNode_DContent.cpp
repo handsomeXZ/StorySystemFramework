@@ -37,16 +37,34 @@ FText USDTGraphNode_DContent::GetContent() const
 	return FText::FromString(TEXT("NULL"));
 }
 
+void USDTGraphNode_DContent::SetContent(const FText& InText, ETextCommit::Type CommitInfo)
+{
+	if (USDTNode_DContent* node = Cast<USDTNode_DContent>(NodeInstance))
+	{
+		node->Content = InText;
+	}
+}
+
+TMap<FName, FText> USDTGraphNode_DContent::GetDescription() const
+{
+	TMap<FName, FText> Result;
+	if (USDTNode_DContent* node = Cast<USDTNode_DContent>(NodeInstance))
+	{
+		Result.Add(TEXT("SourceName"), FText::FromString(node->SourceMode == EDialogueSourceMode::NPC ? TEXT("NPC") : TEXT("Player")));
+		Result.Add(TEXT("IdentityName"), FText::FromString(node->IdentityTag.ToString()));
+	}
+	
+	return MoveTemp(Result);
+}
+
 UEdGraphPin* USDTGraphNode_DContent::GetInputPin() const
 {
-	Pins[0]->PinToolTip = LOCTEXT("SDTNodeTooltip", "In").ToString();
 	return Pins[0];
 }
 
 
 UEdGraphPin* USDTGraphNode_DContent::GetOutputPin() const
 {
-	Pins[1]->PinToolTip = LOCTEXT("SDTNodeTooltip", "Out").ToString();
 	return Pins[1];
 }
 

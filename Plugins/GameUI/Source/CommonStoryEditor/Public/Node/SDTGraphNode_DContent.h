@@ -29,4 +29,7 @@ public:
 	//~ End USCTGraphNode Interface
 
 	FText GetContent() const;
+	void SetContent(const FText& InText, ETextCommit::Type CommitInfo);
+
+	TMap<FName, FText> GetDescription() const;
 };

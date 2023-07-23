@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ModularPawn.h"
-
+#include "GameplayTagContainer.h"
 
 #include "TYLPawn.generated.h"
 

@@ -99,7 +99,7 @@ void UDialogueManager::UnRegisterPlayer()
 	Context.PlayerOnDiscardDelegate.Unbind();
 }
 
-void UDialogueManager::SelectDialogue(FIndexHandle OptionID)
+void UDialogueManager::SelectDialogue(int32 OptionID)
 {
 	Context.SelectOptionDelegate.ExecuteIfBound(OptionID);
 }

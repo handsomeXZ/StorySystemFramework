@@ -3,6 +3,7 @@
 
 #include "StoryDialogueEdGraphSchema.h"
 
+#include "CommonStoryEditor.h"
 #include "Node/SCTEditorTypes.h"
 #include "Node/SDTGraphNode_DEntry.h"
 #include "Node/SDTGraphNode_DExit.h"
@@ -258,7 +259,11 @@ const FPinConnectionResponse UStoryDialogueEdGraphSchema::CanCreateConnection(co
 	}
 
 	// Compare the directions
-	if ((PinA->Direction == EGPD_Input) && (PinB->Direction == EGPD_Input))
+	if (PinA->Direction == EGPD_Input)
+	{
+		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, LOCTEXT("PinErrorInput", "Can't connect node start from input node"));
+	}
+	else if ((PinA->Direction == EGPD_Input) && (PinB->Direction == EGPD_Input))
 	{
 		return FPinConnectionResponse(CONNECT_RESPONSE_DISALLOW, LOCTEXT("PinErrorInput", "Can't connect input node to input node"));
 	}
@@ -410,6 +415,10 @@ bool UStoryDialogueEdGraphSchema::TryCreateConnection(UEdGraphPin* PinA, UEdGrap
 	return bModified;
 }
 
+TSharedPtr<FEdGraphSchemaAction> UStoryDialogueEdGraphSchema::GetCreateCommentAction() const
+{
+	return TSharedPtr<FEdGraphSchemaAction>(static_cast<FEdGraphSchemaAction*>(new FSDTSchemaAction_AddComment));
+}
 
 bool UStoryDialogueEdGraphSchema::IsCacheVisualizationOutOfDate(int32 InVisualizationCacheID) const
 {

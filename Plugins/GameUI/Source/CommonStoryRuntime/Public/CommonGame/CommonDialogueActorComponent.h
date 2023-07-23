@@ -31,7 +31,7 @@ public:
 	FVector InRelativeLocationIn = FVector(0, 0, 0), bool InbOverrideSizeIn = false, FVector2D InSizeOverrideIn = FVector2D(0.0, 0.0));
 
 	UFUNCTION(BlueprintCallable)
-	void ActivateDialogueInteractive();
+	bool ActivateDialogueInteractive();
 
 	/**
 	 * Bind some delegates to the dialog Manager
@@ -59,11 +59,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget")
 	TSubclassOf<UCommonDialogue_WidgetComponent> WidgetCompClass;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetComp!=nullptr"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetCompClass!=nullptr"))
 	TSubclassOf<UUserWidget> WidgetClass;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetComp!=nullptr"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetCompClass!=nullptr"))
 	FVector RelativeLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetComp!=nullptr"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "WidgetCompClass!=nullptr"))
 	bool bOverrideSize;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue|Widget", meta = (EditCondition = "bOverrideSize&&WidgetComp!=nullptr"))
 	FVector2D SizeOverride;

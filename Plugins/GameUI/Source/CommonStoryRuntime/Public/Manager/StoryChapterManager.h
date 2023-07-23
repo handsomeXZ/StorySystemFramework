@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UObject/PrimaryAssetId.h"
+#include "GameplayTagContainer.h"
 #include "StoryChapterManager.generated.h"
 
-struct FGameplayTag;
 class UStoryChapterTree;
 class UStoryDialogueTree;
 class USCTNode_Chapter;

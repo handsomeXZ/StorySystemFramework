@@ -4,7 +4,22 @@
 
 #include "SCTGraphEdSchemaActions.generated.h"
 
+/** Action to add a comment to the graph */
+USTRUCT()
+struct FSCTSchemaAction_AddComment : public FEdGraphSchemaAction
+{
+	GENERATED_BODY()
 
+	FSCTSchemaAction_AddComment() : FEdGraphSchemaAction() {}
+	FSCTSchemaAction_AddComment(FText InDescription, FText InToolTip)
+		: FEdGraphSchemaAction(FText(), MoveTemp(InDescription), MoveTemp(InToolTip), 0)
+	{
+	}
+
+	// FEdGraphSchemaAction interface
+	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override final;
+	// End of FEdGraphSchemaAction interface
+};
 
 /** Action to auto arrange the graph */
 USTRUCT()

@@ -19,9 +19,7 @@ class UDialogueAction_ActionBase : public UObject
 	 * Asynchronous support
 	 */
 public:
-	void Initialize(const FWorldContext& WorldContext);
 
 	virtual UWorld* GetWorld() const override final;
 private:
-	TObjectPtr<UWorld> CacheWorld;
 };

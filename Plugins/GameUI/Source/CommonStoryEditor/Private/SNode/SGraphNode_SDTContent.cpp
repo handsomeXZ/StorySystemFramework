@@ -58,7 +58,7 @@ void SGraphNode_SDTContent::UpdateGraphNode()
 	
 	const FMargin NodePadding = FMargin(2.0f);
 
-	TSharedPtr<STextBlock> DescriptionText;
+	TSharedPtr<SInlineEditableTextBlock> ContentText;
 	TSharedPtr<SNodeTitle> NodeTitle = SNew(SNodeTitle, GraphNode);
 	TWeakPtr<SNodeTitle> WeakNodeTitle = NodeTitle;
 	auto GetNodeTitlePlaceholderWidth = [WeakNodeTitle]() -> FOptionalSize
@@ -174,6 +174,7 @@ void SGraphNode_SDTContent::UpdateGraphNode()
 										]
 									]
 									+SVerticalBox::Slot()
+									.Padding(FMargin(0, 10.0f, 0, 10.0f))
 									.AutoHeight()
 									.HAlign(HAlign_Center)
 									[
@@ -183,16 +184,48 @@ void SGraphNode_SDTContent::UpdateGraphNode()
 										.VAlign(VAlign_Center)
 										[
 											// DESCRIPTION MESSAGE
-											SAssignNew(DescriptionText, STextBlock)
+											SAssignNew(ContentText, SInlineEditableTextBlock)
 											.Visibility(EVisibility::Visible)
 											.WrapTextAt(400.0f)
-											.AutoWrapText(false)
-											.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
 											.Justification(ETextJustify::Center)
 											.Text(this, &SGraphNode_SDTContent::GetContent)
+											.OnVerifyTextChanged(this, &SGraphNode_SDTContent::OnVerifyNameTextChanged)
+											.OnTextCommitted(this, &SGraphNode_SDTContent::SetContent)
 										]
 										
 										
+									]
+									+SVerticalBox::Slot()
+									.MaxHeight(20.0f)
+									[
+										SNew(SBorder)
+										.BorderImage(FAppStyle::GetBrush("BTEditor.Graph.BTNode.Body"))
+										.BorderBackgroundColor(FLinearColor(0.1f, 0.1f, 0.1f, 0.5f))
+										.HAlign(HAlign_Fill)
+										.VAlign(VAlign_Fill)
+										[
+											SNew(SHorizontalBox)
+											+ SHorizontalBox::Slot()
+											.AutoWidth()
+											[
+												SNew(STextBlock)
+												.Visibility(EVisibility::Visible)
+												.ColorAndOpacity(FLinearColor::White)
+												.Justification(ETextJustify::Left)
+												.Text(this, &SGraphNode_SDTContent::GetSourceName)
+											]
+											+ SHorizontalBox::Slot()
+											.Padding(FMargin(10.0f, 0, 0, 0))
+											.HAlign(HAlign_Fill)
+											.VAlign(VAlign_Fill)
+											[
+												SNew(STextBlock)
+												.Visibility(EVisibility::Visible)
+												.ColorAndOpacity(FLinearColor::White)
+												.Justification(ETextJustify::Right)
+												.Text(this, &SGraphNode_SDTContent::GetIdentityName)
+											]
+										]
 									]
 							]
 						]
@@ -303,4 +336,31 @@ FText SGraphNode_SDTContent::GetContent() const
 {
 	USDTGraphNode_DContent* MyNode = CastChecked<USDTGraphNode_DContent>(GraphNode);
 	return MyNode ? MyNode->GetContent() : FText::FromString(TEXT("empty"));
+}
+
+void SGraphNode_SDTContent::SetContent(const FText& InText, ETextCommit::Type CommitInfo)
+{
+	USDTGraphNode_DContent* MyNode = CastChecked<USDTGraphNode_DContent>(GraphNode);
+	if (MyNode)
+	{
+		MyNode->SetContent(InText, CommitInfo);
+	}
+}
+
+FText SGraphNode_SDTContent::GetSourceName() const
+{
+	return GetDescription(TEXT("SourceName"));
+}
+
+FText SGraphNode_SDTContent::GetIdentityName() const
+{
+	return GetDescription(TEXT("IdentityName"));
+}
+
+FText SGraphNode_SDTContent::GetDescription(FName Name) const
+{
+	USDTGraphNode_DContent* MyNode = CastChecked<USDTGraphNode_DContent>(GraphNode);
+	TMap<FName, FText> EmptyMap;
+
+	return MyNode ? MyNode->GetDescription()[Name] : FText::FromString(TEXT(""));
 }

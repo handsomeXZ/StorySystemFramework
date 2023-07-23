@@ -1,14 +1,16 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CommonGame/TYLPawn.h"
+#include "NativeGameplayTags.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(TYLPawn)
 
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_DEFAULT_ROLE, "Gameplay.Role.Default");
 
 ATYLPawn::ATYLPawn(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	IdentityTag = FGameplayTag::RequestGameplayTag(TEXT("Gameplay.Role.NPC.Default"));
+	IdentityTag = TAG_DEFAULT_ROLE;
 }
 
 

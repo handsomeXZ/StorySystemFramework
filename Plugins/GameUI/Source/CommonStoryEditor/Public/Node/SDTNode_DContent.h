@@ -17,10 +17,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Dialogue)
 	EDialogueSourceMode SourceMode;
-	UPROPERTY(EditAnywhere, Category = Dialogue)
+	UPROPERTY(EditAnywhere, Category = Dialogue, meta = (EditCondition = "SourceMode == EDialogueSourceMode::NPC"))
 	FGameplayTag IdentityTag;
 	UPROPERTY(EditAnywhere, Category = Dialogue)
 	FText Content;
-	UPROPERTY(EditAnywhere, Category = Dialogue)
+	UPROPERTY(EditAnywhere, Category = Dialogue, meta = (EditCondition = "SourceMode == EDialogueSourceMode::NPC"))
 	float TimeWaitForSkip;
 };

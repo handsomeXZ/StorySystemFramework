@@ -49,6 +49,8 @@ public class CommonStoryEditor : ModuleRules
                 "ClassViewer",
                 "AssetRegistry",
                 "KismetWidgets",
+                "InputCore",
+
 
                 "AIGraph",        //@Todo: 暂时借用一下它的Class搜集器
                 "CommonStoryRuntime",

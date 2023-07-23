@@ -9,6 +9,8 @@ class COMMONSTORYRUNTIME_API UTransitionAction : public UObject
 {
 	GENERATED_BODY()
 public:
+	virtual class UWorld* GetWorld() const override;
+
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute"))
 	void Execute_BlueprintImplement(bool& Result);
 

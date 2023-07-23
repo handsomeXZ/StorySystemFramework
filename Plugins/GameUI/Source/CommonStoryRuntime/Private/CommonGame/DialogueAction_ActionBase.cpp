@@ -2,17 +2,20 @@
 
 UDialogueAction_ActionBase::UDialogueAction_ActionBase(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, CacheWorld(nullptr)
 {
 
-}
-
-void UDialogueAction_ActionBase::Initialize(const FWorldContext& WorldContext)
-{
-	CacheWorld = WorldContext.World();
 }
 
 UWorld* UDialogueAction_ActionBase::GetWorld() const
 {
-	return CacheWorld;
+	auto& WorldContexts = GEngine->GetWorldContexts();
+	for (const FWorldContext& context : WorldContexts)
+	{
+		if (context.WorldType == EWorldType::Game || context.WorldType == EWorldType::PIE)
+		{
+			return context.World();
+		}
+	}
+
+	return nullptr;
 }

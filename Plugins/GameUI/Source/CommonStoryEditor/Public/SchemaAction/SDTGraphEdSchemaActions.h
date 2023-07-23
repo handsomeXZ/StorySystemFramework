@@ -4,6 +4,22 @@
 
 #include "SDTGraphEdSchemaActions.generated.h"
 
+/** Action to add a comment to the graph */
+USTRUCT()
+struct FSDTSchemaAction_AddComment : public FEdGraphSchemaAction
+{
+	GENERATED_BODY()
+
+	FSDTSchemaAction_AddComment() : FEdGraphSchemaAction() {}
+	FSDTSchemaAction_AddComment(FText InDescription, FText InToolTip)
+		: FEdGraphSchemaAction(FText(), MoveTemp(InDescription), MoveTemp(InToolTip), 0)
+	{
+	}
+
+	// FEdGraphSchemaAction interface
+	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override final;
+	// End of FEdGraphSchemaAction interface
+};
 
 /** Action to add a node to the graph */
 USTRUCT()

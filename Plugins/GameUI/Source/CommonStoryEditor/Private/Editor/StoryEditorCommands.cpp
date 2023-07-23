@@ -21,6 +21,8 @@ FStoryEditorCommonCommands::FStoryEditorCommonCommands()
 void FStoryEditorCommonCommands::RegisterCommands()
 {
 	UI_COMMAND(NewDialogueTree, "New Dialogue Tree", "Create a new Dialogue Tree Data Asset", EUserInterfaceActionType::Button, FInputChord());
+
+	UI_COMMAND(CreateComment, "Create Comment", "Create a comment box", EUserInterfaceActionType::Button, FInputChord(EKeys::C))
 }
 
 

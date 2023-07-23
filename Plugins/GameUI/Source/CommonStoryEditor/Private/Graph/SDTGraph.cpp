@@ -369,7 +369,10 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 				NextIndexHanle.NodeType = Cast<USDTNode>(MyNode->NodeInstance)->NodeType;
 				NextIndexHanle.Index = SDTAsset->GetNodeListNum(NextIndexHanle.NodeType);
 				
-				NewNode->Options.Add(NextIndexHanle, OptionItem);
+				FSDTDOptionContainer Container;
+				Container.IndexHandle = NextIndexHanle;
+				Container.OptionItem = OptionItem;
+				NewNode->Options.Add(Container);
 				NewNode->Children.Add(NextIndexHanle);
 
 				if (bExpectReturnNode/*ReturnToIndex.Index != -1*/)
@@ -391,12 +394,15 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 				if (SDTGraphNode->bInstancedAction)
 				{
 					USDTNode_DAction_Instance* TempNode = Cast<USDTNode_DAction_Instance>(SDTGraphNode->NodeInstance);
+					NewNode.ActionType = TempNode->ActionType;
 					NewNode.CommonActionInstance = TempNode->ActionInstance;
 					NewNode.CommonActionClass = nullptr;
+					
 				}
 				else
 				{
 					USDTNode_DAction_UnInstance* TempNode = Cast<USDTNode_DAction_UnInstance>(SDTGraphNode->NodeInstance);
+					NewNode.ActionType = TempNode->ActionType;
 					NewNode.CommonActionInstance = nullptr;
 					NewNode.CommonActionClass = TempNode->ActionClass;
 				}

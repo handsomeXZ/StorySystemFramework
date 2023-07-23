@@ -50,6 +50,16 @@ struct FSDTDOptionItem
 };
 
 USTRUCT()
+struct FSDTDOptionContainer
+{
+	GENERATED_BODY()
+	UPROPERTY()
+	FIndexHandle IndexHandle;
+	UPROPERTY()
+	FSDTDOptionItem OptionItem;
+};
+
+USTRUCT()
 struct FSDTDOptionsNode
 {
 	GENERATED_BODY()
@@ -58,7 +68,7 @@ struct FSDTDOptionsNode
 	UPROPERTY()
 	TArray<FIndexHandle> Children;
 	UPROPERTY()
-	TMap<FIndexHandle, FSDTDOptionItem> Options;
+	TArray<FSDTDOptionContainer> Options;
 };
 
 USTRUCT()
@@ -85,6 +95,8 @@ struct FSDTDActionNode
 	FIndexHandle NodeIndex;
 	UPROPERTY()
 	FIndexHandle Child;
+	UPROPERTY()
+	ESDTCommonActionType ActionType;
 	UPROPERTY()
 	TObjectPtr<USDTDCommonAction> CommonActionInstance;
 	UPROPERTY()
@@ -114,10 +126,12 @@ class COMMONSTORYRUNTIME_API USDTDSelectorAction : public USDTDActionBase
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute"))
-	void Execute_BlueprintImplement(bool& Result) const;
+	virtual class UWorld* GetWorld() const override;
 
-	virtual bool Execute() const;
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute"))
+	FDialogueGlobalContext Execute_BlueprintImplement(FDialogueGlobalContext Context, UWorld* World, bool& Result) const;
+
+	virtual bool Execute(FDialogueGlobalContext& Context, FWorldContext& WorldContext) const;
 };
 
 UCLASS(EditInlineNew, Blueprintable, BlueprintType, Abstract)
@@ -125,10 +139,18 @@ class COMMONSTORYRUNTIME_API USDTDCommonAction : public USDTDActionBase
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute"))
-	void Execute_BlueprintImplement() const;
+	virtual class UWorld* GetWorld() const override;
 
-	virtual void Execute() const;
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute"))
+	FDialogueGlobalContext Execute_BlueprintImplement(FDialogueGlobalContext Context, UWorld* World) const;
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Execute And Blocking"))
+	void ExecuteAndBlocking_BlueprintImplement(FDialogueGlobalContext Context, UWorld* World) const;
+
+	UFUNCTION(BlueprintCallable, meta=(HideSelfPin))
+	virtual void ContinueExc(FDialogueGlobalContext Context) const;
+
+	virtual void Execute(FDialogueGlobalContext& Context, FWorldContext& WorldContext) const;
 };
 
 UCLASS(BlueprintType)
@@ -194,7 +216,9 @@ class COMMONSTORYRUNTIME_API UStoryDialogueTree : public UObject
 		case ESDTNodeType::Action:
 			return ActionNodeList.Num();
 		case ESDTNodeType::Return:
-			return ActionNodeList.Num();
+			return ReturnNodeList.Num();
+		case ESDTNodeType::Continue:
+			return ReturnNodeList.Num();
 		default:
 			return 0;
 		}

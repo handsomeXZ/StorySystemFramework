@@ -59,6 +59,9 @@ public:
 	bool CanPasteNodes() const;
 	void DuplicateNodes();
 	bool CanDuplicateNodes() const;
+	bool CanCreateComment() const;
+	void OnCreateComment();
+	void OnNodeTitleCommitted(const FText& NewText, ETextCommit::Type CommitInfo, UEdGraphNode* NodeBeingChanged);
 	
 	TSharedRef<SWidget> SpawnSCTDetailsTab();
 	TSharedRef<SWidget> SpawnSCTGraphEdTab();
