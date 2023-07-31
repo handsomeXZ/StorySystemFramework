@@ -7,6 +7,8 @@
 #include "DialogueStateMachine.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnSelectOptionHandler, int32);
+DECLARE_DELEGATE(FOnContinueContentDialogueHandler);
+
 
 USTRUCT(BlueprintType)
 struct FDialogueTaskContext
@@ -18,16 +20,18 @@ public:
 	FIndexHandle CurrentIndexHandle;
 	bool bTimeWaitForSkip;
 	float TimeWaitForSkip;
+
+	FOnSelectOptionHandler SelectOptionDelegate;
+	FOnContinueContentDialogueHandler ContinueContentDialogueDelegate;
 	//////////////////////////////////////////////////////////////////////////
 	FDialogueGlobalContext ActionContext;
+	UPROPERTY();
 	TObjectPtr<UStoryDialogueTree> StoryDialogueTree;
-	FWorldContext WorldContext;
 	TMap<TObjectPtr<UInputAction>, FInputHandle> InputHandles;
+	FWorldContext WorldContext;
 	//////////////////////////////////////////////////////////////////////////
 	FOnReceiveHandler PlayerOnReceiveDelegate;
 	FOnDiscardHandler PlayerOnDiscardDelegate;
-
-	FOnSelectOptionHandler SelectOptionDelegate;
 
 	TMap<FGameplayTag, FOnReceiveHandler> ReceiverEventMap;
 	TMap<FGameplayTag, FOnDiscardHandler> DiscardEventMap;
@@ -60,6 +64,8 @@ public:
 	virtual void SwitchState(FDialogueTaskContext& Context, ESDTNodeType PrevNodeType, ESDTNodeType NextNodeType) {}
 
 	virtual EDialogueStateName GetState() { return EDialogueStateName::UnKnown; }
+
+	virtual void InActivateState(FDialogueTaskContext& Context) {}
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -87,6 +93,8 @@ public:
 
 	virtual EDialogueStateName GetState() override;
 
+	virtual void InActivateState(FDialogueTaskContext& Context) override;
+
 private:
 	UDialogueStateBase* CurrentState;
 	ESDTNodeType PrevNodeType;
@@ -103,8 +111,8 @@ class UDialogueState_InActive : public UDialogueStateBase
 public:
 	UDialogueState_InActive() { StateID = EDialogueStateName::InActive; }
 
-	virtual void Execute(FDialogueTaskContext& Context) {}
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override {}
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 };
 
 UCLASS()
@@ -114,8 +122,8 @@ class UDialogueState_Active : public UDialogueStateBase
 public:
 	UDialogueState_Active() { StateID = EDialogueStateName::Active; }
 
-	virtual void Execute(FDialogueTaskContext& Context);
-	virtual bool CanTransition(FDialogueTaskContext& Context)
+	virtual void Execute(FDialogueTaskContext& Context) override;
+	virtual bool CanTransition(FDialogueTaskContext& Context) override
 	{
 		Reset();
 		return true;
@@ -129,11 +137,11 @@ class UDialogueState_Execute : public UDialogueStateBase
 public:
 	UDialogueState_Execute() { StateID = EDialogueStateName::Execute; }
 
-	virtual void Execute(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override;
 
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 
-	virtual void Reset()
+	virtual void Reset() override
 	{
 		ResultOfSelector = false;
 	}
@@ -150,11 +158,11 @@ public:
 	UDialogueState_WaitingSingleDialogue() { StateID = EDialogueStateName::WaitingSingleDialogue; }
 
 
-	virtual void Execute(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override;
 
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 
-	virtual void Reset()
+	virtual void Reset() override
 	{
 		bIsActive = false;
 		bInputLocked = true;
@@ -175,11 +183,11 @@ class UDialogueState_WaitingOptionsDialogue : public UDialogueStateBase
 public:
 	UDialogueState_WaitingOptionsDialogue() { StateID = EDialogueStateName::WaitingOptionsDialogue; }
 
-	virtual void Execute(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override;
 
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 
-	virtual void Reset()
+	virtual void Reset() override
 	{
 		bIsActive = false;
 		SelectedOptionID = -1;
@@ -199,9 +207,9 @@ class UDialogueState_WaitingBlockingAction : public UDialogueStateBase
 public:
 	UDialogueState_WaitingBlockingAction() { StateID = EDialogueStateName::WaitingBlockingAction; }
 
-	virtual void Execute(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override;
 
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 
 };
 
@@ -212,8 +220,8 @@ class UDialogueState_Exit : public UDialogueStateBase
 public:
 	UDialogueState_Exit() { StateID = EDialogueStateName::Exit; }
 
-	virtual void Execute(FDialogueTaskContext& Context);
+	virtual void Execute(FDialogueTaskContext& Context) override;
 
-	virtual bool CanTransition(FDialogueTaskContext& Context);
+	virtual bool CanTransition(FDialogueTaskContext& Context) override;
 };
 

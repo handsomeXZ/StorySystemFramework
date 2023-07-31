@@ -10,7 +10,7 @@ UEmotionComponent::UEmotionComponent()
 	AlertValue.EmotionType = EEmotionType::Alert;
 	EcstaticValue.EmotionType = EEmotionType::Ecstatic;
 	AdmirationValue.EmotionType = EEmotionType::Admiration;
-	FrightValue.EmotionType = EEmotionType::Fright;
+	RageValue.EmotionType = EEmotionType::Rage;
 	// ...
 }
 
@@ -45,7 +45,7 @@ TArray<FEmotionParameter> UEmotionComponent::GetEmotion()
 	EmotionParameters.Add(AlertValue);
 	EmotionParameters.Add(EcstaticValue);
 	EmotionParameters.Add(AdmirationValue);
-	EmotionParameters.Add(FrightValue);
+	EmotionParameters.Add(RageValue);
 
 	if (bEnableRlueModifier)
 	{
@@ -108,9 +108,9 @@ void UEmotionComponent::ApplyEffect_Single(FEmotionParameter EmotionDelta, float
 		UpdateEmotion(AdmirationValue, EmotionDelta, DecayRate);
 		break;
 	}
-	case EEmotionType::Fright:
+	case EEmotionType::Rage:
 	{
-		UpdateEmotion(FrightValue, EmotionDelta, DecayRate);
+		UpdateEmotion(RageValue, EmotionDelta, DecayRate);
 		break;
 	}
 	}

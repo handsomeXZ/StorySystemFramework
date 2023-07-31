@@ -11,7 +11,7 @@ UWorld* UDialogueAction_ActionBase::GetWorld() const
 	auto& WorldContexts = GEngine->GetWorldContexts();
 	for (const FWorldContext& context : WorldContexts)
 	{
-		if (context.WorldType == EWorldType::Game || context.WorldType == EWorldType::PIE)
+		if (context.WorldType == EWorldType::Game/* || context.WorldType == EWorldType::PIE*/)
 		{
 			return context.World();
 		}

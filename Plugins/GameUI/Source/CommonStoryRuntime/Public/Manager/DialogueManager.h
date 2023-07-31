@@ -46,7 +46,14 @@ public:
 	void UnRegisterPlayer();
 
 	UFUNCTION(BlueprintCallable)
+	AActor* FindOwnerByIdentity(FGameplayTag IdentityTag);
+
+	UFUNCTION(BlueprintCallable)
 	void SelectDialogue(int32 OptionID);
+	UFUNCTION(BlueprintCallable)
+	void ContinueContentDialogue();
+	UFUNCTION(BlueprintCallable)
+	void CancelDialogueTask();
 
 	void UnBindInput();
 

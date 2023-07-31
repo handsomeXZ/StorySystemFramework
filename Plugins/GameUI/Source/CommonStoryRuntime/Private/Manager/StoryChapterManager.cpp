@@ -102,8 +102,13 @@ UStoryDialogueTree* UStoryChapterManager::GetStoryDialogueTree(FGameplayTag Iden
 		{
 			if (List->ReadIndex < List->SDTList.Num())
 			{
-				List->ReadIndex += bReadAdded ? 1:0;
-				return List->SDTList[List->ReadIndex];
+				UStoryDialogueTree* SDT = List->SDTList[List->ReadIndex];
+				if (bReadAdded && List->ReadIndex + 1 < List->SDTList.Num())
+				{
+					List->ReadIndex++;
+				}
+				
+				return SDT;
 			}
 		}
 	}

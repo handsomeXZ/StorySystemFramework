@@ -56,7 +56,7 @@ bool UDialogueManager::ActivateDialogueTask(FGameplayTag IdentityTag)
 
 	if (UStoryChapterManager* SCM = GetGameInstance()->GetSubsystem<UStoryChapterManager>())
 	{
-		if (UStoryDialogueTree* SDT = SCM->GetStoryDialogueTree(IdentityTag))
+		if (UStoryDialogueTree* SDT = SCM->GetStoryDialogueTree(IdentityTag, true))
 		{
 			Context. StoryDialogueTree = SDT;
 			Context.WorldContext = *GetGameInstance()->GetWorldContext();
@@ -99,9 +99,32 @@ void UDialogueManager::UnRegisterPlayer()
 	Context.PlayerOnDiscardDelegate.Unbind();
 }
 
+AActor* UDialogueManager::FindOwnerByIdentity(FGameplayTag IdentityTag)
+{
+	if (TObjectPtr<AActor>* Owner =  Context.ReceiverOwnerMap.Find(IdentityTag))
+	{
+		return *Owner;
+	}
+
+	return nullptr;
+}
+
 void UDialogueManager::SelectDialogue(int32 OptionID)
 {
 	Context.SelectOptionDelegate.ExecuteIfBound(OptionID);
+}
+
+void UDialogueManager::ContinueContentDialogue()
+{
+	Context.ContinueContentDialogueDelegate.ExecuteIfBound();
+}
+
+void UDialogueManager::CancelDialogueTask()
+{
+	if (StateMachine && StateMachine->GetState() != EDialogueStateName::InActive)
+	{
+		StateMachine->InActivateState(Context);
+	}
 }
 
 void UDialogueManager::ResetManager()

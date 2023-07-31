@@ -141,12 +141,21 @@ struct FDialogueGlobalContext
 {
 	GENERATED_BODY()
 public:
+	FDialogueGlobalContext() : ActionToContinue(nullptr), bIsDirty(false) {}
+
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FName, float> FloatData;
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FGameplayTag, TObjectPtr<AActor>> Targets;
 	UPROPERTY()
 	TObjectPtr<UActionToContinue> ActionToContinue;
+
+	// When the Context is passed, the user may forget it and cause the Context to be lost, 
+	// so we use the Dirty flag to protect it. When the Context is lost, 
+	// the Dirty flag of the returned Context is also lost, so we know that we need to restore the Context. 
+	// Note that BlockingAction does not require such an operation because it does not modify the Context.
+	UPROPERTY()
+	bool bIsDirty;
 };
 
 UCLASS()

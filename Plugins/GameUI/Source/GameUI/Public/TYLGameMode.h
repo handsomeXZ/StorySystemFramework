@@ -14,7 +14,7 @@ struct FPrimaryAssetId;
  *	The base game mode class used by this project.
  *	Pair this with a ATYLGameState
  */
-UCLASS(Config = Game, Meta = (ShortTooltip = "The base game mode class used by this project."))
+UCLASS(Abstract, Config = Game, Meta = (ShortTooltip = "The base game mode class used by this project."))
 class ATYLGameMode : public AGameModeBase
 {
 	GENERATED_BODY()

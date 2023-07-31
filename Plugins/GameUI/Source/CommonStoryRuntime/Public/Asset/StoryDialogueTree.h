@@ -118,6 +118,14 @@ class COMMONSTORYRUNTIME_API USDTDActionBase : public UObject
 {
 	GENERATED_BODY()
 public:
+	/**
+	 * Attention:
+	 * 1. The SelectedBit Info is saved as uint8, which supports up to 128 options.
+	 * 2. SelectedBit saves only the Prev selection, and Current selection is not recorded.
+	 * 3. Index Start from 0.
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool CheckSelectedByBitInfo(int32 Index, uint8 SelectedBitInfo) const;
 
 };
 
@@ -132,6 +140,7 @@ public:
 	FDialogueGlobalContext Execute_BlueprintImplement(FDialogueGlobalContext Context, UWorld* World, bool& Result) const;
 
 	virtual bool Execute(FDialogueGlobalContext& Context, FWorldContext& WorldContext) const;
+
 };
 
 UCLASS(EditInlineNew, Blueprintable, BlueprintType, Abstract)
@@ -151,6 +160,7 @@ public:
 	virtual void ContinueExc(FDialogueGlobalContext Context) const;
 
 	virtual void Execute(FDialogueGlobalContext& Context, FWorldContext& WorldContext) const;
+
 };
 
 UCLASS(BlueprintType)

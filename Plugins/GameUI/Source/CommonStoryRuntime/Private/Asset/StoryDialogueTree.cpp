@@ -2,14 +2,37 @@
 #include "CommonGame/DialogueAction_RuleAction.h"
 
 //////////////////////////////////////////////////////////////////////////
+
+bool USDTDActionBase::CheckSelectedByBitInfo(int32 Index, uint8 SelectedBitInfo) const
+{
+	uint8 compare = FGenericPlatformMath::Exp2(float(Index));
+	if ((compare & SelectedBitInfo) == compare)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // USDTDSelectorAction
 
 bool USDTDSelectorAction::Execute(FDialogueGlobalContext& Context, FWorldContext& WorldContext) const
 {
 	bool result = false;
 
+	Context.bIsDirty = true;
+
 	// Pass in a UWorld object to be used in case GetWorld() fails.
-	Context = Execute_BlueprintImplement(Context, WorldContext.World(), result);
+	FDialogueGlobalContext TempContext = Execute_BlueprintImplement(Context, WorldContext.World(), result);
+
+	if (TempContext.bIsDirty == true)
+	{
+		Context = TempContext;
+		Context.bIsDirty = false;
+	}
 
 	return result;
 }
@@ -48,7 +71,13 @@ void USDTDCommonAction::Execute(FDialogueGlobalContext& Context, FWorldContext& 
 	}
 	else
 	{
-		Context = Execute_BlueprintImplement(Context, WorldContext.World());
+		Context.bIsDirty = true;
+		FDialogueGlobalContext  TempContext = Execute_BlueprintImplement(Context, WorldContext.World());
+		if (TempContext.bIsDirty == true)
+		{
+			Context = TempContext;
+			Context.bIsDirty = false;
+		}
 	}
 
 }

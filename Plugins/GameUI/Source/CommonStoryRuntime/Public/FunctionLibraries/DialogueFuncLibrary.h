@@ -17,7 +17,7 @@ class COMMONSTORYRUNTIME_API UDialogueFuncLibrary : public UBlueprintFunctionLib
 public:
 	UDialogueFuncLibrary() { }
 
-	UFUNCTION(BlueprintCallable, Category = "Global Dialogue Function", meta = (HidePin = "ContextObject", DefaultToSelf = "ContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "Global Dialogue Function", meta = (DefaultToSelf = "ContextObject"))
 	static bool ActivateDialogueEvent(const UObject* ContextObject = nullptr);
 
 	UFUNCTION(BlueprintCallable, Category = "Global Get IdentifyComponent Tag")

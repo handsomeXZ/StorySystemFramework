@@ -7,11 +7,6 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(TYLLocalPlayer)
 
-
-UTYLLocalPlayer::UTYLLocalPlayer()
-{
-}
-
 void UTYLLocalPlayer::PostInitProperties()
 {
 	Super::PostInitProperties();

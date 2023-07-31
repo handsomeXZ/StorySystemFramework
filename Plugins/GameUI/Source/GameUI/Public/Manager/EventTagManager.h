@@ -27,6 +27,7 @@ public:
 	bool HasEventTag(const FGameplayTag& Tag, bool bIsExact = true);
 	UFUNCTION(BlueprintCallable)
 	bool HasEventTags(const FGameplayTagContainer& Container, bool bIsExact = true, bool bIsAllMatching = true);
+	
 
 private:
 	FGameplayTagContainer EventTagContainer;

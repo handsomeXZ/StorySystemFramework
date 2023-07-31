@@ -80,6 +80,6 @@ private:
 	FEmotionParameter AlertValue;
 	FEmotionParameter EcstaticValue;
 	FEmotionParameter AdmirationValue;
-	FEmotionParameter FrightValue;
+	FEmotionParameter RageValue;
 	TObjectPtr<UEmotionalRuleModifier> RuleModifier = nullptr;
 };

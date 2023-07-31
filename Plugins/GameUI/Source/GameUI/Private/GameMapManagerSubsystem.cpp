@@ -3,6 +3,7 @@
 
 #include "GameMapManagerSubsystem.h"
 #include "ExperienceDefinition.h"
+#include "Engine\AssetManager.h"
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_GAMEPLAY_SMALLMAP_DEFAULT, "Gameplay.SmallMap.Default");
 
@@ -44,7 +45,7 @@ FString UMapManager_TravelRequst::ConstructTravelURL() const
 	return FString::Printf(TEXT("%s%s"),
 		*GetMapName(),
 		*CombinedExtraArgs);
-}
+} 
 
 
 void UGameMapManagerSubsystem::SeamlessTravel(UMapManager_TravelRequst* Requst)

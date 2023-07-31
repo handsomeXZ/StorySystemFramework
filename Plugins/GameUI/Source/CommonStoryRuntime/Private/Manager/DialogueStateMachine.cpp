@@ -56,7 +56,6 @@ void UDialogueTaskStateMachine::Update(FDialogueTaskContext& Context)
 		PrevNodeType = CurrentNodeType;
 		CurrentNodeType = Context.CurrentIndexHandle.NodeType;
 		SwitchState(Context, PrevNodeType, CurrentNodeType);
-		UE_LOG(LogTemp, Warning, TEXT("Switch Dialogue State: %d"), CurrentState->StateID);
 		// Execute immediately after the state Switch
 		Execute(Context);
 	}
@@ -134,12 +133,17 @@ EDialogueStateName UDialogueTaskStateMachine::GetState()
 	return EDialogueStateName::UnKnown;
 }
 
+void UDialogueTaskStateMachine::InActivateState(FDialogueTaskContext& Context)
+{
+	CurrentState = StateMap[EDialogueStateName::Exit];
+	CurrentState->Execute(Context);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // UDialogueState_InActive
 
 bool UDialogueState_InActive::CanTransition(FDialogueTaskContext& Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Check CanTransition Dialogue State: InActive"));
 	if (Context.StoryDialogueTree != nullptr && Context.PlayerOnReceiveDelegate.IsBound() && Context.PlayerOnDiscardDelegate.IsBound())
 	{
 		if (Context.StoryDialogueTree->bReliable)
@@ -169,8 +173,10 @@ void UDialogueState_Active::Execute(FDialogueTaskContext& Context)
 	Context.bTimeWaitForSkip = false;
 	for (FGameplayTag& tag : Context.StoryDialogueTree->IdentifyTagList)
 	{
-		TObjectPtr<AActor>* target = Context.ReceiverOwnerMap.Find(tag);
-		Context.ActionContext.Targets.Add(tag, *target);
+		if (TObjectPtr<AActor>* target = Context.ReceiverOwnerMap.Find(tag))
+		{
+			Context.ActionContext.Targets.Add(tag, *target);
+		}
 	}
 }
 
@@ -208,12 +214,22 @@ void UDialogueState_Execute::Execute(FDialogueTaskContext& Context)
 
 				handle->ExecuteIfBound(MyContext);
 			}
+			else
+			{
+				// If the corresponding Receiver is not found and exceptions are not avoided, the system uses a TimeOut mechanism to jump to the next node
+				Context.bTimeWaitForSkip = true;
+				Context.TimeWaitForSkip = 0;
+			}
 		}
 
 		break;
 	}
 	case ESDTNodeType::Options:
 	{
+		// Use bit to store selected information for up to 128 options
+		// SelectedBit
+		uint8 SelectedBit = 0x00;
+		
 		FSDTDOptionsNode& Node = Context.StoryDialogueTree->OptionsNodeList[IndexHandle.Index];
 		FStoryDialogueContext MyContext;
 		MyContext.DialogueType = EDialogueType::Multiple;
@@ -237,8 +253,21 @@ void UDialogueState_Execute::Execute(FDialogueTaskContext& Context)
 
 				MyContext.Contents.Add(FDialogueItem(Index, Container.OptionItem.Content, Container.OptionItem.ExtraFloat, Container.OptionItem.bSelected));
 			}
+
+			if (Container.OptionItem.bSelected)
+			{
+				// SelectedBit
+				SelectedBit += 0x01 * FGenericPlatformMath::Exp2(float(Index));
+			}
+
 			Index++;
 		}
+
+		// uin8  : 8bit
+		// float : 32bit
+		// SelectedBit
+		float& Bit = Context.ActionContext.FloatData.FindOrAdd(FName(TEXT("SelectedBit")));
+		Bit = SelectedBit;
 
 		Context.PlayerOnReceiveDelegate.ExecuteIfBound(MyContext);
 
@@ -332,14 +361,22 @@ bool UDialogueState_Execute::CanTransition(FDialogueTaskContext& Context)
 
 void UDialogueState_WaitingSingleDialogue::Execute(FDialogueTaskContext& Context)
 {
-	bIsActive = (Context.StoryDialogueTree->InputAction) ? false : true;
+	// No special skip processing is done here, when the default Input mode is found to be not provided, 
+	// it will be handled by "UDialogueManager::ContinueContentDialogue()" and "TimeWaitForSkip". 
+	/*bIsActive = (Context.StoryDialogueTree->InputAction) ? false : true;*/
+	bIsActive = false;
+
+
+	// Can force skip this state
+	Context.ContinueContentDialogueDelegate.BindUObject(this, &ThisClass::ActiveThisState);
+
 
 	bInputLocked = false;
 	if (FInputHandle* handle = Context.InputHandles.Find(Context.StoryDialogueTree->InputAction))
 	{
 		return;
 	}
-
+	
 	// By default, the first player Index is 0
 	APlayerController* controller = Context.WorldContext.World()->GetFirstPlayerController();
 	check(controller);
@@ -407,6 +444,8 @@ bool UDialogueState_WaitingSingleDialogue::CanTransition(FDialogueTaskContext& C
 		}
 
 		Context.CurrentIndexHandle = Node.Child;
+
+		Context.ContinueContentDialogueDelegate.Unbind();
 		Reset();
 	}
 
@@ -438,18 +477,17 @@ bool UDialogueState_WaitingOptionsDialogue::CanTransition(FDialogueTaskContext& 
 		FSDTDOptionContainer& Item = Node.Options[SelectedOptionID];
 
 		Item.OptionItem.bSelected = true;
-
-		Context.SelectOptionDelegate.Unbind();
 		Context.PlayerOnDiscardDelegate.Execute();
-
 		Context.CurrentIndexHandle = Item.IndexHandle;
 
+		Context.SelectOptionDelegate.Unbind();
 		Reset();
 		return true;
 	}
 
 	return false;
 }
+
 //////////////////////////////////////////////////////////////////////////
 // UDialogueState_WaitingBlockingAction
 
@@ -474,10 +512,21 @@ bool UDialogueState_WaitingBlockingAction::CanTransition(FDialogueTaskContext& C
 
 void UDialogueState_Exit::Execute(FDialogueTaskContext& Context)
 {
-	Context.bTimeWaitForSkip = false;
-	Context.TimeWaitForSkip = 0;
+
+// Context Clear
 	Context.CurrentIndexHandle.Index = -1;
 	Context.CurrentIndexHandle.NodeType = ESDTNodeType::UnKnown;
+
+	Context.bTimeWaitForSkip = false;
+	Context.TimeWaitForSkip = 0;
+	
+	Context.SelectOptionDelegate.Unbind();
+	Context.ContinueContentDialogueDelegate.Unbind();
+
+	Context.ActionContext.FloatData.Empty();
+	Context.ActionContext.Targets.Empty();
+	Context.ActionContext.ActionToContinue = nullptr;
+	Context.ActionContext.bIsDirty = false;
 
 	// UnBind Input For Player, By default, the first player Index is 0.
 	APlayerController* controller = Context.WorldContext.World()->GetFirstPlayerController();
@@ -496,13 +545,19 @@ void UDialogueState_Exit::Execute(FDialogueTaskContext& Context)
 			}
 		}
 	}
-
 	Context.InputHandles.Empty();
-	
-	Context.ActionContext.FloatData.Empty();
-	Context.ActionContext.Targets.Empty();
+
+	Context.WorldContext = FWorldContext();
 
 	Context.StoryDialogueTree = nullptr;
+
+// Discard All
+	Context.PlayerOnDiscardDelegate.ExecuteIfBound();
+	for (auto& DiscardEvent : Context.DiscardEventMap)
+	{
+		DiscardEvent.Value.ExecuteIfBound();
+	}
+
 }
 
 bool UDialogueState_Exit::CanTransition(FDialogueTaskContext& Context)

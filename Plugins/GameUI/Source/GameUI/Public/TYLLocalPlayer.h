@@ -19,8 +19,6 @@ class GAMEUI_API UTYLLocalPlayer : public UCommonLocalPlayer
 
 public:
 
-	UTYLLocalPlayer();
-
 	//~UObject interface
 	virtual void PostInitProperties() override;
 	//~End of UObject interface

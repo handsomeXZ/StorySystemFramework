@@ -13,7 +13,7 @@ enum class EEmotionType : uint8
 	Alert,
 	Ecstatic,
 	Admiration,
-	Fright,
+	Rage,
 	// Advanced
 
 
