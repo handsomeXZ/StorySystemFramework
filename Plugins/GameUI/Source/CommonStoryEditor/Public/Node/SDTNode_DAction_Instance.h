@@ -15,6 +15,8 @@ class USDTNode_DAction_Instance : public USDTNode
 public:
 	USDTNode_DAction_Instance() : USDTNode(ESDTNodeType::Action) {}
 
+	virtual void GetPersistObjects(TSet<UObject*>& Objects) override;
+
 	UPROPERTY(EditAnywhere, Category = CommonAction)
 	FString NodeName;
 	UPROPERTY(EditAnywhere, Category = CommonAction)

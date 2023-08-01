@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	ETimeUnitMode TimeUnit = ETimeUnitMode::Days;
 	UPROPERTY(EditAnywhere)
-	int32 Time;
+	int32 Time = 0;
 };
 
 UCLASS(BlueprintType, Const)

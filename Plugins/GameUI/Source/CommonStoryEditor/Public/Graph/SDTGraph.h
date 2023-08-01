@@ -27,7 +27,9 @@ class USDTGraph : public UStoryGraph
 
 	void RemoveOrphanedNodes();
 	bool CanRemoveNestedObject(UObject* TestObject) const;
-	void CollectAllNodeInstances(TSet<UObject*>& NodeInstances);
+	void CollectAllNodeInstancesAndPersistObjects(TSet<UObject*>& NodeInstances);
+
+	virtual void ResetObjectOwner(UObject* Object, UObject* Owner);
 
 	// Parent instance node
 	UPROPERTY()

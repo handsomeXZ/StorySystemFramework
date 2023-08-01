@@ -3,7 +3,7 @@
 #include "Node/SCTEditorTypes.h"
 #include "Node/SDTNode_DAction_Instance.h"
 #include "Node/SDTNode_DAction_UnInstance.h"
-
+#include "Asset/StoryDialogueTree.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 
 #define LOCTEXT_NAMESPACE "SCTGraphNode_Entry"
@@ -85,7 +85,7 @@ void USDTGraphNode_DAction::InitializeNodeInstance()
 	if (bInstancedAction)
 	{
 		USDTNode_DAction_Instance* Action = Cast<USDTNode_DAction_Instance>(NodeInstance);
-		Action->ActionInstance = NewObject<USDTDCommonAction>(NodeInstance, ActionClass);
+		Action->ActionInstance = NewObject<USDTDCommonAction>(Action, ActionClass);
 	}
 	else
 	{

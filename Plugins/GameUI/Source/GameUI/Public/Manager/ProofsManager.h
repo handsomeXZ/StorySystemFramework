@@ -21,7 +21,7 @@ public:
 	FString Comment;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* Icon;
+	TObjectPtr<UTexture2D> Icon;
 
 };
 

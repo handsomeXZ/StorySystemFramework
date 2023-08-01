@@ -48,9 +48,9 @@ public:
 		return HashCombineFast(Hash, GetTypeHash(B.Index));
 	}
 	UPROPERTY()
-	ESDTNodeType NodeType;
+	ESDTNodeType NodeType = ESDTNodeType::UnKnown;
 	UPROPERTY()
-	int32 Index;
+	int32 Index = -1;
 };
 
 UENUM(BlueprintType)
@@ -131,7 +131,7 @@ struct FStoryDialogueContext
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadOnly)
-	EDialogueType DialogueType;
+	EDialogueType DialogueType = EDialogueType::Single;
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FDialogueItem> Contents;
 };

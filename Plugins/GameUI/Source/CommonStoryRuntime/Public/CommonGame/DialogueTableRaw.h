@@ -19,7 +19,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UDialogueAction_RuleAction> RlueAction;
 	UPROPERTY(EditAnywhere)
-	EDialogueSelectionMode SelectionMode;
+	EDialogueSelectionMode SelectionMode = EDialogueSelectionMode::Primary;
 	UPROPERTY(EditAnywhere)
 	FText DialogueText;
 	UPROPERTY(EditAnywhere)

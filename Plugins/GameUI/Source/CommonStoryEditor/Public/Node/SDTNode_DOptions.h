@@ -29,6 +29,8 @@ class USDTNode_DOptions : public USDTNode
 public:
 	USDTNode_DOptions() : USDTNode(ESDTNodeType::Options) {}
 
+	virtual void GetPersistObjects(TSet<UObject*>& Objects) override;
+
 	UPROPERTY(EditAnywhere, Category = Dialogue)
 	TArray<FSDTNode_DOptionItem> Options;
 };

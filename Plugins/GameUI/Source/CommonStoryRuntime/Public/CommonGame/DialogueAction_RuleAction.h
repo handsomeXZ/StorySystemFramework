@@ -8,7 +8,7 @@
 
 struct FStoryDialogueContext;
 
-UCLASS(Abstract, Blueprintable, BlueprintType, meta = (DisplayName = "Dialogue Rule Action"))
+UCLASS(Abstract, Blueprintable, EditInlineNew, BlueprintType, meta = (DisplayName = "Dialogue Rule Action"))
 class UDialogueAction_RuleAction : public UDialogueAction_ActionBase
 {
 	GENERATED_BODY()

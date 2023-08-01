@@ -25,11 +25,11 @@ struct FEmotionParameter
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EEmotionType EmotionType;
+	EEmotionType EmotionType = EEmotionType::Alert;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float IntensityValue;
+	float IntensityValue = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Priority;
+	float Priority = 0.0f;
 };
 
 /**

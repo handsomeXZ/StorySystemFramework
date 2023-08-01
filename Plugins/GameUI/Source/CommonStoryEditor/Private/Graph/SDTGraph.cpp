@@ -22,6 +22,7 @@
 #include "Node/SDTNode_DContinue.h"
 #include "Node/SDTNode_DExit.h"
 #include "SchemaAction/SDTGraphEdSchemaActions.h"
+#include "CommonGame/DialogueAction_RuleAction.h"
 
 #include "SGraphNode.h"
 #include "SGraphPanel.h"
@@ -91,7 +92,7 @@ void USDTGraph::CreateSDT(USDTGraphNode* RootGraphNode)
 	RemoveOrphanedNodes();
 }
 
-void USDTGraph::CollectAllNodeInstances(TSet<UObject*>& NodeInstances)
+void USDTGraph::CollectAllNodeInstancesAndPersistObjects(TSet<UObject*>& NodeInstances)
 {
 	for (int32 Idx = 0; Idx < Nodes.Num(); Idx++)
 	{
@@ -99,6 +100,11 @@ void USDTGraph::CollectAllNodeInstances(TSet<UObject*>& NodeInstances)
 		if (MyNode)
 		{
 			NodeInstances.Add(MyNode->NodeInstance);
+			if (USDTNode* SDTNode = Cast<USDTNode>(MyNode->NodeInstance))
+			{
+				// 与 SCT不同的是，SDT不直接保存NodeInstance（仅存在于Editor状态下的Graph内），所以需要通过实现 `GetPersistObjects()` 来获取存留的Object
+				SDTNode->GetPersistObjects(NodeInstances);
+			}
 		}
 	}
 }
@@ -106,7 +112,7 @@ void USDTGraph::CollectAllNodeInstances(TSet<UObject*>& NodeInstances)
 void USDTGraph::RemoveOrphanedNodes()
 {
 	TSet<UObject*> NodeInstances;
-	CollectAllNodeInstances(NodeInstances);
+	CollectAllNodeInstancesAndPersistObjects(NodeInstances);
 
 	NodeInstances.Remove(nullptr);
 
@@ -271,6 +277,7 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 			USDTGraphNode* SDTGraphNode = Cast<USDTGraphNode>(RootGraphNode);
 			USDTNode* SDTNode = Cast<USDTNode>(SDTGraphNode->NodeInstance);
 
+			UObject* WaitingResetOwner = nullptr;
 
 			if (SDTNode->NodeType == ESDTNodeType::Content)
 			{
@@ -319,6 +326,8 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 					USDTNode_DSelector_Instance* TempNode = Cast<USDTNode_DSelector_Instance>(SDTGraphNode->NodeInstance);
 					NewNode->SelectorInstance = TempNode->ActionInstance;
 					NewNode->SelectorClass = nullptr;
+
+					WaitingResetOwner = NewNode->SelectorInstance;
 				}
 				else
 				{
@@ -369,6 +378,8 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 				NextIndexHanle.NodeType = Cast<USDTNode>(MyNode->NodeInstance)->NodeType;
 				NextIndexHanle.Index = SDTAsset->GetNodeListNum(NextIndexHanle.NodeType);
 				
+				WaitingResetOwner = OptionItem.RuleAction;
+
 				FSDTDOptionContainer Container;
 				Container.IndexHandle = NextIndexHanle;
 				Container.OptionItem = OptionItem;
@@ -398,6 +409,7 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 					NewNode.CommonActionInstance = TempNode->ActionInstance;
 					NewNode.CommonActionClass = nullptr;
 					
+					WaitingResetOwner = NewNode.CommonActionInstance;
 				}
 				else
 				{
@@ -421,9 +433,21 @@ void USDTGraph::ConnectSDTNode(UStoryDialogueTree* SDTAsset, USDTGraphNode* Root
 				ConnectSDTNode(SDTAsset, MyNode, ContinueToIndex, ReturnToIndex, bExpectReturnNode);
 			}
 
+
+			ResetObjectOwner(WaitingResetOwner, SDTAsset);
 		}
 	}
+
 }
 
+
+void USDTGraph::ResetObjectOwner(UObject* Object, UObject* Owner)
+{
+	if (Object && Owner && Object->GetOuter()->GetClass() != Owner->GetClass())
+	{
+		Object->Rename(nullptr, Owner);
+		Object->ClearFlags(RF_Transient);
+	}
+}
 
 #undef LOCTEXT_NAMESPACE

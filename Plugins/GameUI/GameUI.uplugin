@@ -1,8 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineVersion": "5.1.1",
 	"WhitelistPlatforms": "Win64",
-	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/1fa479f8fbbd43ddafdbb4fdb316aef7",
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "GameUI",
@@ -14,9 +12,9 @@
 	"MarketplaceURL": "",
 	"SupportURL": "",
 	"CanContainContent": true,
-	"IsBetaVersion": false,
+	"IsBetaVersion": true,
 	"IsExperimentalVersion": false,
-	"Installed": true,
+	"Installed": false,
 	"Modules": [
 		{
 			"Name": "GameUI",

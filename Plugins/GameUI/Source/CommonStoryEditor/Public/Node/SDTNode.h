@@ -17,6 +17,7 @@ public:
 	/** @return parent node */
 	USDTNode* GetParentNode() const { return ParentNode; }
 
+	virtual void GetPersistObjects(TSet<UObject*>& Objects) {}
 
 public:
 	ESDTNodeType NodeType;

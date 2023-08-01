@@ -29,7 +29,6 @@ public class GameUI : ModuleRules
 				// ... add other public dependencies that you statically link with here ...
 				"UMG",
 				"CommonInput",
-                "CommonUI",
 				"GameplayTags",
 				"GameFeatures",
 				"ModularGameplay",
@@ -38,6 +37,7 @@ public class GameUI : ModuleRules
 				"EnhancedInput",
 				"CommonStoryRuntime",
 				"CommonGame",
+				"CommonUI",
 			}
 			);
 			

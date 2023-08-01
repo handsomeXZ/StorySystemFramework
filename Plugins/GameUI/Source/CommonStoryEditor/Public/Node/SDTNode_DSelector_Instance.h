@@ -14,6 +14,8 @@ class USDTNode_DSelector_Instance : public USDTNode
 public:
 	USDTNode_DSelector_Instance() : USDTNode(ESDTNodeType::Selector) {}
 
+	virtual void GetPersistObjects(TSet<UObject*>& Objects) override;
+
 	UPROPERTY(Instanced, EditAnywhere, Category = Selector)
 	TObjectPtr<USDTDSelectorAction> ActionInstance;
 };

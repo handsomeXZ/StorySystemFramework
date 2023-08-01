@@ -17,10 +17,11 @@ void USDTGraphNode::PostPlacedNewNode()
 	if (NodeClass && (NodeInstance == nullptr))
 	{
 		UEdGraph* MyGraph = GetGraph();
-		UObject* GraphOwner = MyGraph ? MyGraph->GetOuter() : nullptr;
-		if (GraphOwner)
+		//UObject* GraphOwner = MyGraph ? MyGraph->GetOuter() : nullptr;
+		if (MyGraph)
 		{
-			NodeInstance = NewObject<UObject>(GraphOwner, NodeClass);
+			// 与 SCT不同的是，SDT不直接保存NodeInstance（仅存在于Editor状态下的Graph内）
+			NodeInstance = NewObject<UObject>(MyGraph, NodeClass);
 
 			// Redo / Undo
 			/*NodeInstance->SetFlags(RF_Transactional);*/

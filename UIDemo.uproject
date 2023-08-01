@@ -42,5 +42,9 @@
 			"Name": "ControlFlows",
 			"Enabled": true
 		},
+		{
+			"Name": "GameUI",
+			"Enabled": true
+		},
 	]
 }

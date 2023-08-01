@@ -21,28 +21,30 @@ USTRUCT()
 struct FSDTDContentNode
 {
 	GENERATED_BODY()
+
 	UPROPERTY()
 	FIndexHandle NodeIndex;
 	UPROPERTY()
 	FIndexHandle Child;
 	UPROPERTY()
-	EDialogueSourceMode SourceMode;
+	EDialogueSourceMode SourceMode = EDialogueSourceMode::NPC;
 	UPROPERTY()
 	FGameplayTag IdentityTag;
 	UPROPERTY()
 	FText Content;
 	UPROPERTY()
-	float TimeWaitForSkip;
+	float TimeWaitForSkip = -1;
 };
 
 USTRUCT()
 struct FSDTDOptionItem
 {
 	GENERATED_BODY()
+
 	UPROPERTY()
 	FText Content;
 	UPROPERTY()
-	bool bSelected;
+	bool bSelected = false;
 	UPROPERTY()
 	TObjectPtr<UDialogueAction_RuleAction> RuleAction;
 	UPROPERTY()
@@ -96,7 +98,7 @@ struct FSDTDActionNode
 	UPROPERTY()
 	FIndexHandle Child;
 	UPROPERTY()
-	ESDTCommonActionType ActionType;
+	ESDTCommonActionType ActionType = ESDTCommonActionType::Generic;
 	UPROPERTY()
 	TObjectPtr<USDTDCommonAction> CommonActionInstance;
 	UPROPERTY()
