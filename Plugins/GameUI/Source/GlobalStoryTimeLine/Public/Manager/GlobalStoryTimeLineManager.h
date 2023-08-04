@@ -30,6 +30,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ActiveTimeLine(float GameTimeScale);
 
+	UFUNCTION(BlueprintCallable)
+	void TimeFastForward(float TimeDelta);
+	UFUNCTION(BlueprintCallable)
+	void TimeFastForwardToNextTimeNode();
+	UFUNCTION(BlueprintCallable)
+	void SetGlobalTimeDilation(float TimeDilation) { GlobalTimeDilation = TimeDilation; }
+
 	void UpdateTimeLine();
 
 private:
@@ -50,6 +57,7 @@ private:
 	int32 GlobalTime;
 	// GameTimeScale = Reality time difference / Game time difference
 	float GameTimeScale;
+	float GlobalTimeDilation;
 	FTimerHandle TimerHandle;
 	TArray<FTimeNode> TimeNodeQueue;
 	TMap<FGameplayTag, CallBackHandleBucket> CallBackHandleMap;

@@ -55,7 +55,7 @@ void UTYLGameInstance::Init()
 	Super::Init();
 
 	// After subsystems are initialized, hook them together
-	FGameplayTagContainer PlatformTraits = ICommonUIModule::GetSettings().GetPlatformTraits();
+	//FGameplayTagContainer PlatformTraits = ICommonUIModule::GetSettings().GetPlatformTraits();
 
 	//// Register our custom init states
 	//UGameFrameworkComponentManager* ComponentManager = GetSubsystem<UGameFrameworkComponentManager>(this);

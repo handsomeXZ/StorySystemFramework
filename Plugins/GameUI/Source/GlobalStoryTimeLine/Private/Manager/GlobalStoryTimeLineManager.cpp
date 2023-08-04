@@ -6,6 +6,7 @@ UGlobalStoryTimeLineManager::UGlobalStoryTimeLineManager()
 {
 	GlobalTime = 0;
 	GameTimeScale = 1;
+	GlobalTimeDilation = 1;
 }
 
 void UGlobalStoryTimeLineManager::Initialize(FSubsystemCollectionBase& Collection)
@@ -65,9 +66,20 @@ bool UGlobalStoryTimeLineManager::ActiveTimeLine(float GameTimeScaleIn)
 	return true;
 }
 
+void UGlobalStoryTimeLineManager::TimeFastForward(float TimeDelta)
+{
+	GlobalTime+= TimeDelta;
+}
+
+void UGlobalStoryTimeLineManager::TimeFastForwardToNextTimeNode()
+{
+	GlobalTime = TimeNodeQueue.Top().GameTime * GameTimeScale;
+}
+
 void UGlobalStoryTimeLineManager::UpdateTimeLine()
 {
-	GlobalTime++;
+	// GlobalTimeDilation default 1
+	GlobalTime += GlobalTimeDilation;
 	if (TimeNodeQueue.Num() > 0 && TimeNodeQueue.Top().GameTime * GameTimeScale <= GlobalTime)
 	{
 		if (CallBackHandleBucket* HandleBucket = CallBackHandleMap.Find(TimeNodeQueue.Top().TimeNodeTag))

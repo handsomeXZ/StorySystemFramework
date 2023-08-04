@@ -67,9 +67,9 @@ void USDTGraphNode::ResetNodeOwner()
 	if (NodeInstance)
 	{
 		UEdGraph* MyGraph = GetGraph();
-		UObject* GraphOwner = MyGraph ? MyGraph->GetOuter() : nullptr;
 
-		NodeInstance->Rename(NULL, GraphOwner, REN_DontCreateRedirectors | REN_DoNotDirty);
+		// 与 SCT不同的是，SDT不直接保存NodeInstance（仅存在于Editor状态下的Graph内）
+		NodeInstance->Rename(NULL, MyGraph, REN_DontCreateRedirectors | REN_DoNotDirty);
 		NodeInstance->ClearFlags(RF_Transient);
 	}
 }
